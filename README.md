@@ -17,7 +17,8 @@ AiassistantLocal——基于edge impulse的本地语音识别模型
 AiassistantWeb——接入云端大模型的语音程序
 
 
-其中接入云端模型部分参考了：https://gitee.com/chging/esp32s3-ai-chat/的作者厚国兄的实现，具体实现可以star他后从前述地址中参考学习
+其中接入云端模型部分参考了：https://gitee.com/chging/esp32s3-ai-chat/
+的作者厚国兄的实现，具体实现可以star他后从前述地址中参考学习
 将原本的文心一言替换为了讯飞星火Spark pro具有联网搜索功能和实时天气查询的能力。（需要自己申请API）
 
 
