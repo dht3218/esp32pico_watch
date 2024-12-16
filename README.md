@@ -23,7 +23,6 @@
 ### 3.1.0操作逻辑介绍
 
 
-![图片1.png](//image.lceda.cn/oshwhub/3c81d2264eea4c568106f81321b76060.png)
 
 本系统采用手势传感器检测（上下左右、按下）五个维度的操作，为主要的UI控制手段；同时右上角的实体按钮作为功能键使用。
 #### （1）手势控制：
@@ -38,43 +37,43 @@
 ### 3.1.1时钟(clock)
  
 
-![微信图片_20241216154000.png](//image.lceda.cn/oshwhub/cfc4b16c75334541bd968d177d41e9d9.png)
+![1.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/1.png)
 从桌面按下确认后进入时钟程序，由板载RTC芯片提供计时功能并由后台任务RTC_task实时刷新时间数据，结合设置(setting)界面的手动、自动校时功能，可以保证时间的准确性。
 
 
 ###3.1.2设置(setting)
 
 
-![微信图片_20241216154039.png](//image.lceda.cn/oshwhub/4efbc1f0907445f7a470bbd6d75bdb0f.png)
+![2.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/2.png)
 从桌面按下确认后进入设置主界面，目前功能有：屏幕连续亮度调节、WIFI开启/关闭、时钟校准、网页端设置功能。
 其中按下时间校准按钮后会跳转至子界面可选手动设置时间和联网校准时间。
 网页端设置主要用于手表端不便于操作的部分，如WIFI信息录入等。
 
 ### 3.1.3日历(calendar)
-![微信图片_20241216154117.png](//image.lceda.cn/oshwhub/4b90807cd77e4cb2b8ebca2f17eb5bc9.png)
+![3.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/3.png)
 在日历主界面中，上下滑动可以切换显示的月份，右滑退出程序返回主界面
 
 ### 3.1.4 手电筒(light)
-![微信图片_20241216154157.png](//image.lceda.cn/oshwhub/96778923460c42578b7c8f446b3736a9.png)
+![4.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/4.png)
 在电筒主界面中，可以通过上下滑动增加/降低亮度，右滑退出程序返回主界面
 
 ### 3.1.5 AI问答
-![微信图片_20241216154257.png](//image.lceda.cn/oshwhub/f6cb25d987d741fc80d709a88f280329.png)
+![5.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/5.png)
 进入程序后，首先进行鉴权请求，如果网络未连接，或请求失败，将会提示“未连接网络”。
 在主界面按下手势传感器后，将会进入问答过程： 
 
-![微信图片_20241216154350.png](//image.lceda.cn/oshwhub/0ee9040ffbb0452dbfd27772562208ee.png)
+![6.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/6.png)
 在问答期间可以随时再次按下手势传感器取消对话或右滑退出该程序。
 
 ### 3.2 AI语音助手
 AI语音助手没有独立的桌面图标入口，而是使用长按功能键在任意界面唤出的方式。
 
 #### 3.2.1 本地识别模型
-![图片5.png](//image.lceda.cn/oshwhub/1ff06f71ba8344d4b8ca9a1694467dfb.png)
+![7.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/7.png)
 采用MFCC进行特征提取后，使用（主体）4层卷积神经网络进行分类，得到结果后，返回指定的标签值（如setting），在检测到label发生变化后，将自动跳转到对应的界面，实现简单的语音助手功能。
 
 #### 3.2.2 云端识别模型
-![图片4.png](//image.lceda.cn/oshwhub/94d7f32fac724e85a5191b5fc94f891f.png)
+![8.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/8.png)
 通过类似于AI问答的流程，将采集到的语音信息转文字后让云端LLM模型自主判断，返回什么参数，本地解析返回之后执行对应指令，具有一定的任务自主规划能力。
 prompt如下：
 `***你需要根据我提供的信息进行推理并返回指定的数据：你现在可以控制一块智能手表，返回值只允许必须从以下范围取出：（setting，light，calendar，clock），请务必按要求根据下面的任务要求返回指定的字符串，不允许返回上述字符串以外的任何值，如calendar，日期相关请返回calendar，时刻相关返回clock以下是任务：***`
