@@ -1,0 +1,111 @@
+{
+  "deftheme": {
+    "name": "Default",
+    "properties": [
+      {
+        "nid": 1000321,
+        "strtype": "THEME_COLOR",
+        "strval": "Back",
+        "intarray": [
+          24,
+          31,
+          37,
+          255
+        ],
+        "InheritedType": 0
+      },
+      {
+        "nid": 1000322,
+        "strtype": "THEME_COLOR",
+        "strval": "Front",
+        "intarray": [
+          147,
+          195,
+          253,
+          255
+        ],
+        "InheritedType": 0
+      },
+      {
+        "nid": 1000323,
+        "strtype": "THEME_COLOR",
+        "strval": "Mask1",
+        "intarray": [
+          163,
+          181,
+          213,
+          128
+        ],
+        "InheritedType": 0
+      },
+      {
+        "nid": 1000324,
+        "strtype": "THEME_COLOR",
+        "strval": "Mask2",
+        "intarray": [
+          6,
+          39,
+          87,
+          200
+        ],
+        "InheritedType": 0
+      }
+    ]
+  },
+  "themes": [
+    {
+      "name": "LIGHT",
+      "properties": [
+        {
+          "nid": 1000321,
+          "strtype": "THEME_COLOR",
+          "strval": "Back",
+          "intarray": [
+            212,
+            228,
+            246,
+            255
+          ],
+          "InheritedType": 0
+        },
+        {
+          "nid": 1000322,
+          "strtype": "THEME_COLOR",
+          "strval": "Front",
+          "intarray": [
+            14,
+            43,
+            100,
+            255
+          ],
+          "InheritedType": 0
+        },
+        {
+          "nid": 1000323,
+          "strtype": "THEME_COLOR",
+          "strval": "Mask1",
+          "intarray": [
+            161,
+            180,
+            222,
+            128
+          ],
+          "InheritedType": 0
+        },
+        {
+          "nid": 1000324,
+          "strtype": "THEME_COLOR",
+          "strval": "Mask2",
+          "intarray": [
+            109,
+            162,
+            236,
+            225
+          ],
+          "InheritedType": 0
+        }
+      ]
+    }
+  ],
+  "selected_theme": "Default"
+}
