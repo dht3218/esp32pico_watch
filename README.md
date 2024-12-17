@@ -6,7 +6,7 @@
 ![9.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/9.png)
 ![10.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/10.png)
 
-本项目成功设计并实现了一款基于ESP32微控制器的端侧语音处理系统，旨在结合人工智能技术与物联网嵌入式系统，提供低成本、高效率的AI模型部署。项目成果是一款集硬件设备和软件系统于一体的智能手表，具备手势控制和语音识别功能。
+本项目成功设计并实现了一款基于ESP32微控制器的端侧语音处理系统，旨在结合人工智能技术与物联网嵌入式系统，提供低成本、高效率的AI模型部署。项目成果是一款集硬件设备和软件系统于一体的智能手表，具备手势控制和语音识别功能。待机时间72h以上。
 **硬件开源:[https://github.com/dht3218/esp32pico_watch/](https://oshwhub.com/dht3218/esp32picowatch)**
 ## 特性
 - **硬件设计**：采用ESP32-PICO-V3-02为核心，集成Wi-Fi和蓝牙功能，并通过SiP封装技术实现小型化。
