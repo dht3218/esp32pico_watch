@@ -37,7 +37,7 @@
 从桌面按下确认后进入时钟程序，由板载RTC芯片提供计时功能并由后台任务RTC_task实时刷新时间数据，结合设置(setting)界面的手动、自动校时功能，可以保证时间的准确性。
 
 
-###3.1.2设置(setting)
+### 3.1.2设置(setting)
 
 
 ![2.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/2.png)
