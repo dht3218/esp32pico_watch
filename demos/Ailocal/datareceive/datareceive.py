@@ -3,7 +3,7 @@ import struct
 import time
 
 # 配置串口
-ser = serial.Serial('COM23', 115200, timeout=1)  # 替换 'COM21' 为您的串口号
+ser = serial.Serial('COM20', 115200, timeout=1)  # 替换 'COM21' 为您的串口号
 
 # WAV文件参数
 SAMPLE_RATE = 16000  # 采样率
@@ -58,7 +58,7 @@ while(1):
                         file_count = file_count+1
                         # 生成WAV文件头并保存文件
                         wav_header = generate_wav_header(len(raw_audio_data), SAMPLE_RATE, SAMPLE_BITS, CHANNELS)
-                        filename = f'light.{file_count:03d}.wav'  # 生成文件名
+                        filename = f'noise.{file_count:03d}.wav'  # 生成文件名
                         with open(filename, 'wb') as wf:
                             wf.write(wav_header + raw_audio_data)
                             print("WAV file saved!")
