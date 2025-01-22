@@ -32,7 +32,7 @@ void update_bat_data(lv_timer_t *timer) {
 /*Change to your screen resolution*/
 static const uint16_t screenWidth = 240;
 static const uint16_t screenHeight = 280;
-
+extern int livecnt;
 static lv_disp_draw_buf_t draw_buf;
 lv_color_t *buf_3_1 = (lv_color_t *)heap_caps_malloc(screenWidth * screenHeight * sizeof(lv_color_t) / 8, MALLOC_CAP_DMA);
 lv_color_t *buf_3_2 = (lv_color_t *)heap_caps_malloc(screenWidth * screenHeight * sizeof(lv_color_t) / 8, MALLOC_CAP_DMA);
@@ -77,6 +77,7 @@ IRAM_ATTR void lvgl_task(void *arg) {
   }
 }
 extern void led_init();
+extern void MPUsetup();
 extern void lv_port_indev_init(void);
 void setup() {
   EEPROM.begin(4096);  //只读存储器初始化
@@ -85,31 +86,31 @@ void setup() {
                         //pinMode(4, OUTPUT);
                         //digitalWrite(4, HIGH);
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
-
-  if (EEPROM.read(10) == 1) {
-    Serial.println("deepsleep");
-    EEPROM.write(10, 0);
-    delay(200);   
-    EEPROM.commit();
-    es p_deep_sleep_start();
-  }
+  livecnt = 0;
   for (int i = 0; i < 5; i++) {
-    Serial2.println("AT+CSCLK=2\r");
+    Serial2.println("AT+CFUN=1\r");
     delay(100);
     while (Serial2.available()) {
       //Serial.write(".");
       Serial.write(Serial2.read());
     }
   }
-  for (int i = 0; i < 3; i++) {
-    Serial2.println("AT+CFUN=4,0\r");
+  for (int i = 0; i < 2; i++) {
+    Serial2.println("ATE0\r");
     delay(100);
     while (Serial2.available()) {
       //Serial.write(".");
       Serial.write(Serial2.read());
     }
   }
-
+  for (int i = 0; i < 1; i++) {
+    Serial2.println("AT+CSCLK=0\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
+    }
+  }
   pinMode(35, INPUT_PULLUP);
   gpio_wakeup_enable(GPIO_NUM_35, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 34作为中断引脚，低电平触发中断
   esp_sleep_enable_gpio_wakeup();
@@ -161,11 +162,55 @@ void setup() {
   led_init();
   led_set(leddut);
   Wire.begin(8, 7);
-  Serial.println("3");
   RtcSetup0();
-
+  MPUsetup();
   CW2015wakeUp();
+  int H;
+  int M;
+  int S;
+  const char *date = getTc(&H, &M, &S);
+  if (date) {
+    // 提取年份部分（前四个字符）
+    char yearStr[5];
+    strncpy(yearStr, date, 4);  // 复制前四个字符
+    yearStr[4] = '\0';          // 添加字符串结束符
 
+    // 将年份字符串转换为整数
+    int year = atoi(yearStr);
+
+    // 判断年份是否大于2024
+    if (year < 2024) {
+      getT4G();
+    }
+  }
+
+
+  for (int i = 0; i < 3; i++) {
+    Serial2.println("AT+CSCLK=2\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
+    }
+  }
+
+  for (int i = 0; i < 3; i++) {
+    Serial2.println("AT+CFUN=4,0\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
+    }
+  }
+
+
+  if (EEPROM.read(10) == 1) {
+    Serial.println("deepsleep");
+    EEPROM.write(10, 0);
+    delay(200);
+    EEPROM.commit();
+    esp_deep_sleep_start();
+  }
   lv_timer_create(update_bat_data, 1000, NULL);
   Serial.println("Setup done");
 }

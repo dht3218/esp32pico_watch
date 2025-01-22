@@ -8,20 +8,21 @@ static void keypad_init(void);
 static void keypad_read(_lv_indev_drv_t* indev, lv_indev_data_t* data);
 static uint32_t keypad_get_key(void);
 lv_indev_t* indev_keypad;
-
+int livecnt = 0;
 static void button_init(void);
 static void button_read(_lv_indev_drv_t* indev, lv_indev_data_t* data);
 static int8_t button_get_pressed_id(void);
 
 lv_indev_t* indev_button;
 
-
+extern int mpu_check();
 void taplogic() {
-  if (digitalRead(35) == LOW) {
+
+  if (digitalRead(35) == LOW || livecnt >= 500) {
     vTaskDelay(40);  //防止
-    if (digitalRead(35) == LOW) {
+    if (digitalRead(35) == LOW|| livecnt >= 500) {
       vTaskDelay(200);
-      if (digitalRead(35) != LOW && dispnow != -2) {
+      if ((digitalRead(35) != LOW && dispnow != -2)|| livecnt >= 500) {
         Serial.println("sleep");
         led_off();
         tft.writecommand(0x10);
@@ -31,10 +32,13 @@ void taplogic() {
 
         pinMode(4, INPUT_PULLDOWN);
         pinMode(35, INPUT_PULLUP);
+        pinMode(36, INPUT_PULLUP);
         Rtctaskdelete();
         gpio_wakeup_enable(GPIO_NUM_35, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 34作为中断引脚，低电平触发中断
+        gpio_wakeup_enable(GPIO_NUM_36, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 34作为中断引脚，低电平触发中断
+
         esp_sleep_enable_gpio_wakeup();
-        esp_sleep_enable_timer_wakeup(30*60 * 1000000);
+        esp_sleep_enable_timer_wakeup(30 * 60 * 1000000);
 
         vTaskDelay(50);
         //         for (int i = 0; i < 3; i++) {
@@ -42,13 +46,14 @@ void taplogic() {
         //   delay(20);
         //   while (Serial2.available()) {
         //     //Serial.write(".");
-        //     Serial.write(Serial2.read()); 
+        //     Serial.write(Serial2.read());
         //   }
         // }
 
         esp_light_sleep_start();
-
+         while (!mpu_check() && !(esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER)&&!(digitalRead(35) == LOW)) esp_light_sleep_start();
         esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_ALL);
+        livecnt=0;
         if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER) {
           Serial.println("deepsleep");
           EEPROM.write(10, 1);
@@ -234,6 +239,8 @@ static void keypad_read(lv_indev_drv_t* indev_drv, lv_indev_data_t* data) {
 
 /*Get the currently being pressed key.  0 if no key is pressed*/
 static uint32_t keypad_get_key(void) {
+  livecnt += 1;
+
   taplogic();
   if (APDS.gestureAvailable()) {
     // a gesture was detected, read and print to Serial Monitor
@@ -242,18 +249,22 @@ static uint32_t keypad_get_key(void) {
     switch (gesture) {
       case GESTURE_UP:
         Serial.println("UP");
+        livecnt = 0;
         return 1;
 
       case GESTURE_DOWN:
         Serial.println("DOWN");
+        livecnt = 0;
         return 2;
 
       case GESTURE_LEFT:
         Serial.println("LEFT");
+        livecnt = 0;
         return 3;
 
       case GESTURE_RIGHT:
         Serial.println("RIGHT");
+        livecnt = 0;
         return 4;
 
       default:
@@ -268,6 +279,7 @@ static uint32_t keypad_get_key(void) {
   if (APDS.proximityAvailable()) {
     if (APDS.readProximity() == 0) {
       Serial.println("CLICK");
+      livecnt = 0;
       vTaskDelay(100);
       return 5;
     }
@@ -315,6 +327,7 @@ static void button_read(lv_indev_drv_t* indev_drv, lv_indev_data_t* data) {
 
 /*Get ID  (0, 1, 2 ..) of the pressed button*/
 static int8_t button_get_pressed_id(void) {
+  livecnt += 1;
   taplogic();
   if (APDS.gestureAvailable()) {
 
@@ -324,18 +337,22 @@ static int8_t button_get_pressed_id(void) {
     switch (gesture) {
       case GESTURE_UP:
         Serial.println("UP");
+        livecnt = 0;
         return 0;
 
       case GESTURE_DOWN:
         Serial.println("DOWN");
+        livecnt = 0;
         return 1;
 
       case GESTURE_LEFT:
         Serial.println("LEFT");
+        livecnt = 0;
         return -1;
 
       case GESTURE_RIGHT:
         Serial.println("RIGHT");
+        livecnt = 0;
         return 3;
 
       default:
@@ -349,6 +366,7 @@ static int8_t button_get_pressed_id(void) {
 
   if (APDS.proximityAvailable()) {
     if (APDS.readProximity() == 0) {
+      livecnt = 0;
       Serial.println("CLICK");
       vTaskDelay(100);
       if (dispnow != -2) return 2;

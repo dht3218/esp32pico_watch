@@ -90,7 +90,7 @@ int desktopcnt = 1;
 #define iconPRE2num (iconNOWnum - 2 < 0) ? desktopcnt - 2 + AppTotal : desktopcnt - 2
 #define iconNEX2num (iconNOWnum + 2 > AppTotal - 1) ? desktopcnt + 2 - AppTotal : desktopcnt + 2
 void iconLOOPdown1(lv_anim_t *a) {
-  desktopcnt = (desktopcnt == AppTotal - 1) ? 0 : desktopcnt + 1; 
+  desktopcnt = (desktopcnt == AppTotal - 1) ? 0 : desktopcnt + 1;
   vTaskDelay(20);
   lv_img_set_src(ui_iconNEX, ui_imgset_icon[iconNEXnum]);
   lv_img_set_src(ui_iconNOW, ui_imgset_icon[iconNOWnum]);
@@ -681,7 +681,7 @@ void ui_event_ButtonBACK2(lv_event_t *e) {
   if (event_code == LV_EVENT_CLICKED) {
     dispnow = 2;
     _ui_screen_delete(&ui_SETTIME);
-    //ui_SETTING_screen_init();
+    ui_SETTING_screen_init();
     _ui_screen_change(&ui_SETTING, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_SETTING_screen_init);
   }
 }
@@ -768,12 +768,12 @@ void ui_event_aiassistantSwitch1(lv_event_t *e) {
   lv_event_code_t event_code = lv_event_get_code(e);
 
   if (event_code == LV_EVENT_CLICKED) {
-    aicount=6;
+    aicount = 6;
     lv_label_set_text(ui_aiassistantSwitchtext, "云端模型");
-  } 
+  }
 }
 
-void ui_event_aiassistantlabel2(lv_event_t *e) { 
+void ui_event_aiassistantlabel2(lv_event_t *e) {
   lv_event_code_t event_code = lv_event_get_code(e);
   if (event_code == LV_EVENT_VALUE_CHANGED) {
     gotuofunc(e);
@@ -786,7 +786,7 @@ void ui_event_ButtonBACK6(lv_event_t *e) {
 
   if (event_code == LV_EVENT_CLICKED) {
     dispnow = -1;
-    aicount=5;
+    aicount = 5;
     setAssistantWebRecording(0);
 
     _ui_screen_delete(&ui_Aiassistant);
@@ -843,14 +843,14 @@ lv_group_t *grouphand;
 
 // SCREEN: ui_LIGHT
 void ui_LIGHT_screen_init(void);
-lv_obj_t * ui_LIGHT;
-void ui_event_ButtonBACK7(lv_event_t * e);
-lv_obj_t * ui_ButtonBACK7;
-void ui_event_ButtonUp5(lv_event_t * e);
-lv_obj_t * ui_ButtonUp5;
-void ui_event_ButtonDown5(lv_event_t * e);
-lv_obj_t * ui_ButtonDown5;
-lv_obj_t * ui_Image1;
+lv_obj_t *ui_LIGHT;
+void ui_event_ButtonBACK7(lv_event_t *e);
+lv_obj_t *ui_ButtonBACK7;
+void ui_event_ButtonUp5(lv_event_t *e);
+lv_obj_t *ui_ButtonUp5;
+void ui_event_ButtonDown5(lv_event_t *e);
+lv_obj_t *ui_ButtonDown5;
+lv_obj_t *ui_Image1;
 
 void ui_event_ButtonBACK7(lv_event_t *e) {
   lv_event_code_t event_code = lv_event_get_code(e);

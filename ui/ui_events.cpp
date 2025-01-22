@@ -10,6 +10,7 @@
 #include "Wifitask.h"
 #include <Arduino.h>
 #include "AisassistantWeb.h"
+#include "SETTING.h"
 using std::string;
 
 void getTWifi(lv_event_t* e) {
@@ -17,7 +18,7 @@ void getTWifi(lv_event_t* e) {
   RtcgetTwifi();
   int H = 0;
   int M = 0;
-  int S = 0;
+  int S =  0;
   getTc(&H, &M, &S);
   timeset[0] = H / 10;
   string Ttemp = std::__cxx11::to_string(timeset[0]);
@@ -45,7 +46,7 @@ void Wifistart(lv_event_t* e) {
   // Your code here
   // Connect to WiFi
   if (Wificheck() == 0) {
-    if (Wificonnect("dht", "12345678")) {
+    if (Wificonnection()) {
       wifistatu = 1;
       lv_label_set_text(ui_WIFItext, " WIFI:已连接");
       lv_obj_add_state(ui_WIFIKEY, LV_STATE_CHECKED);  // 开
@@ -66,6 +67,7 @@ void Wifistart(lv_event_t* e) {
 }
 
 void SettingStart(lv_event_t* e) {
+  startSetting();
   // Your code here
 }
 

@@ -1,6 +1,6 @@
 #include "AiassistantLocal.h"
 #include "AisassistantWeb.h"
-#include <pico_detect_inferencing.h>
+#include <pico_detect01_inferencing.h>
 #include <driver/i2s.h>
 #include "user_led.h"
 #include "ui.h"  ////////////////////
@@ -52,7 +52,7 @@ static void capture_samples(void *arg) {
   while (record_status) {
     //Serial.print("-1 ");
     if (capwait == 1) {  // 得到识别结果后，抑制一段时间，防止误识别
-      vTaskDelay(1300);
+      vTaskDelay(100);
       capwait = 0;
     }
     //Serial.print("0 ");
@@ -73,9 +73,14 @@ static void capture_samples(void *arg) {
       }
       // Serial.print("5 ");
       // scale the data (otherwise the sound is too quiet)
-      for (int x = 0; x < i2s_bytes_to_read / 2; x += 1) {
-        sampleBuffer[x] = (int16_t)(sampleBuffer[x]) * 16;  // 与数据采集时匹配                                     
+      // for (int x = 0; x < i2s_bytes_to_read / 2; x += 1) {   
+      //   sampleBuffer[x] = (int16_t)(sampleBuffer[x]) * 16;  // 与数据采集时匹配
+      // }
+      for (uint32_t i = 0; i < i2s_bytes_to_read; i += 2) {
+        (*(uint16_t *)(sampleBuffer + i)) <<= 4;
       }
+
+
       // Serial.print("6 ");
       audio_inference_callback(i2s_bytes_to_read);
       // if (record_status) {
@@ -127,8 +132,7 @@ static bool microphone_inference_record(void) {
   //int t=millis();
   while (inference.buf_ready == 0) {
     vTaskDelay(10);
-   // if(millis()>(t+2000))break;
-
+    // if(millis()>(t+2000))break;
   }
   Serial.println("buf_ready");
   inference.buf_ready = 0;
@@ -187,8 +191,8 @@ void AILocalloop(void *arg) {
       ei_printf("ERR: Failed to run classifier (%d)\n", r);
       break;
     }
-    int pred_index = 3;       // Initialize pred_index
-    float pred_value = 0.55;  // Initialize pred_value
+    int pred_index = 3;      // Initialize pred_index
+    float pred_value = 0.7;  // Initialize pred_value
 
     // print the predictions
     Serial.print("Predictions ");

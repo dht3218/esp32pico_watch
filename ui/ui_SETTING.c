@@ -228,8 +228,8 @@ void ui_SETTING_screen_init(void) {
   lv_obj_add_event_cb(ui_ButtonGETTIME, ui_event_ButtonGETTIME, LV_EVENT_ALL, NULL);
   lv_obj_add_event_cb(ui_SETTINGKEY, ui_event_SETTINGKEY, LV_EVENT_ALL, NULL);
   lv_obj_add_event_cb(ui_WIFIKEY, ui_event_WIFIKEY, LV_EVENT_ALL, NULL);
+  
   lv_group_remove_all_objs(grouphand);
-
   lv_group_add_obj(grouphand, ui_BLslider);
   lv_group_add_obj(grouphand, ui_WIFIKEY);
   lv_group_add_obj(grouphand, ui_ButtonGETTIME);

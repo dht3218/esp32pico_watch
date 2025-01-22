@@ -200,13 +200,13 @@ void ui_DESK_screen_init(void) {
                                          _ui_theme_color_Front);
   ui_object_set_themeable_style_property(ui_battery0, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BORDER_OPA,
                                          _ui_theme_alpha_Front);
-/* 设置边框宽度 */
-lv_obj_set_style_border_width(ui_battery0, 1, LV_PART_MAIN | LV_STATE_DEFAULT); // 将边框宽度设置为1
+  /* 设置边框宽度 */
+  lv_obj_set_style_border_width(ui_battery0, 1, LV_PART_MAIN | LV_STATE_DEFAULT);  // 将边框宽度设置为1
   ui_batvalue = lv_label_create(ui_battery0);
   lv_obj_set_width(ui_batvalue, LV_SIZE_CONTENT);   /// 1
   lv_obj_set_height(ui_batvalue, LV_SIZE_CONTENT);  /// 1
   lv_obj_set_align(ui_batvalue, LV_ALIGN_CENTER);
- getbat();
+  getbat();
 
   ui_object_set_themeable_style_property(ui_batvalue, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                          _ui_theme_color_Front);
@@ -230,8 +230,8 @@ lv_obj_set_style_border_width(ui_battery0, 1, LV_PART_MAIN | LV_STATE_DEFAULT); 
   ui_object_set_themeable_style_property(ui_battery1, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_BORDER_OPA,
                                          _ui_theme_alpha_Front);
 
-lv_obj_set_style_border_width(ui_battery1, 1, LV_PART_MAIN | LV_STATE_DEFAULT); // 将边框宽度设置为1
-  
+  lv_obj_set_style_border_width(ui_battery1, 1, LV_PART_MAIN | LV_STATE_DEFAULT);  // 将边框宽度设置为1
+
 
   lv_obj_add_event_cb(ui_ButtonDown, ui_event_ButtonDown, LV_EVENT_ALL, NULL);
   lv_obj_add_event_cb(ui_ButtonUp, ui_event_ButtonUp, LV_EVENT_ALL, NULL);

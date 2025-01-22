@@ -24,15 +24,15 @@ const char *ssid = "dht";
 const char *password = "12345678";
 
 // Baidu API credentials
-const char *baidu_api_key = "*";//请填写自己的
-const char *baidu_secret_key = "*";//请填写自己的
+const char *baidu_api_key = "GakjRjg8gvBJR0kPAI3bELE8";
+const char *baidu_secret_key = "wlcE2Ynr2WIZGmm2jCpZJIiThYKEeyB7";
 
 // Baidu 千帆大模型
-char *qianfan_api_key = "*";//请填写自己的
-char *qianfan_secret_key = "*";//请填写自己的
+char *qianfan_api_key = "ISllFHtC2PlGBIu1Gfk74I3m";
+char *qianfan_secret_key = "J5L7rmxGgMbmJJdZHxkpgMYev6nNPm6T";
 // Spark API的URL和授权信息
 const char *Spark_url = "https://spark-api-open.xf-yun.com/v1/chat/completions";
-const char *Spark_authorization = "Bearer *";//请填写自己的
+const char *Spark_authorization = "Bearer GfnukHUxljsYtRFEsEWG:PjDPcjFvHKwiOwuTkkaW";
 
 // 获取access token
 String baidu_access_token = "";
@@ -341,8 +341,11 @@ String baiduErnieBot_Get(String access_token, String prompt) {
   // 返回响应数据
   return ernieResponse;
 }
-
+#include "EEPROM.h"
+int volume = 2;
 void baiduTTS_Get(String access_token, String text) {
+  volume = EEPROM.read(100);
+
   if (access_token == "") {
     Serial.println("access_token is null");
     return;
@@ -397,7 +400,7 @@ void baiduTTS_Get(String access_token, String text) {
         // 获取返回的音频数据流
         Stream *stream = http.getStreamPtr();
         uint8_t buffer[512];
-        uint8_t bufferold[512] = { 0 };
+        // uint8_t bufferold[512] = { 0 };
         size_t bytesRead = 0;
 
         // Serial.println(stream);
@@ -418,9 +421,9 @@ void baiduTTS_Get(String access_token, String text) {
             //   Serial.println("重复");continue;
             // }
             // vTaskDelay(1000);
-            memcpy(bufferold, buffer, sizeof(buffer));
+            //memcpy(bufferold, buffer, sizeof(buffer));
             Serial.println(bytesRead);
-            // for (int j=0; j < sizeof(buffer); j++) buffer[j] *= 8;
+            for (int j = 0; j < sizeof(buffer); j++) buffer[j] *= volume;
             if (bytesRead > 0) {
               size_t bytesWritten = 0;  // i += 1;Serial.println(i);
               i2s_write(I2S_OUT_PORT, (int16_t *)buffer, bytesRead, &bytesWritten, portMAX_DELAY);
@@ -476,7 +479,7 @@ void SparkLLM_Get(const char *requestBody1, const char *&label_change) {
     "messages": [
         {
             "role": "system",
-            "content": "你是一个智能管家 简要回答不超过20字",
+            "content": "你是一个智能管家 简要回答不超过20字，简要回答不超过20字",
             "role": "user",
             "content": ")";
     String requestBody2 = R"( "}
@@ -692,6 +695,9 @@ void mainChat(void *arg) {
         Serial.println("recoding");
         // i2s录音
         esp_err_t result = i2s_read(I2S_IN_PORT, data, sizeof(data), &bytes_read, portMAX_DELAY);
+        for (int x = 0; x < bytes_read/2 ; x += 1) {
+          data[x] = (int16_t)(data[x]) * 8;  // 与数据采集时匹配
+        }
         Serial.println("recoded");
         memcpy(pcm_data + recordingSize, data, bytes_read);
         recordingSize += bytes_read;
@@ -747,7 +753,7 @@ void mainChat(void *arg) {
 #ifdef LVUSED
           lv_textarea_set_text(ui_aichattext1, "正在思考...");
 #endif
-          String recognizedText =STT_GET(baidu_access_token.c_str(), pcm_data, recordingSize);
+          String recognizedText = STT_GET(baidu_access_token.c_str(), pcm_data, recordingSize);
           Serial.println("Recognized text: " + recognizedText);
 
           ////////////////////////////
@@ -762,7 +768,7 @@ void mainChat(void *arg) {
           Serial.print("LLMResponse: ");
           Serial.println(LLMResponse.c_str());
 
-           SoundSetup();
+          SoundSetup();
           //  文本转音频tts并通过MAX98357A输出（语音合成API访问）
           TTS_GET(baidu_access_token.c_str(), LLMResponse);
           // Serial.println("ttsSize: ");

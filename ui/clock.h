@@ -7,12 +7,14 @@
 
 
 
-
+#define RXD2 19
+#define TXD2 21
 #ifdef __cplusplus
 extern "C" {
 #endif  //__cplusplus
 void getDc(int* Y, int* M, int* D);
   const char* getTc(int* H, int* M, int* S);
+  void getT4G();
   void RtcSetup();
   void RtcSetup0();
   void RtcgetTwifi();

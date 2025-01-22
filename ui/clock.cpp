@@ -140,7 +140,54 @@ void getDc(int* Y, int* M, int* D) {  //获取本地时间
   return;
 }
 
+void getT4G() {
+  Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
+  for (int i = 0; i < 5; i++) {
+    Serial2.println("AT+CIPGSMLOC=2,1\r");
+    String response = "";
+    int cnt = 0;
+    while (!Serial2.available()) {
+      cnt += 1;
+      Serial.print(".");
+      delay(10);
+      if (cnt >= 5) {
+        Serial.println("getT4Gfail");
+        break;
+      }
+    }
+    Serial.println("AT+CIPGSMLOC=2,1\r");
+    while (Serial2.available()) {
+      response = Serial2.readString();
+      if (response.length() > 20) {
+        // 解析时间信息
+        String timeString = response.substring(16, 35);  // 提取时间部分
+        Serial.println(timeString);
+        int Tyear = atoi(timeString.substring(0, 4).c_str());
+        int Tmon = atoi(timeString.substring(5, 7).c_str());
+        int Tday = atoi(timeString.substring(8, 10).c_str());
+        int Thour = atoi(timeString.substring(11, 13).c_str());
+        int Tmin = atoi(timeString.substring(14, 16).c_str());
+        int Tsec = atoi(timeString.substring(17, 19).c_str());
 
+        // 打印解析结果
+        Serial.println(Tyear);
+        Serial.println(Tmon);
+        Serial.println(Tday);
+        Serial.println(Thour);
+        Serial.println(Tmin);
+        Serial.println(Tsec);
+
+        // // 调整RTC模块
+        if (Tyear >= 2025) {
+          DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
+          rtc.adjust(now);
+        }
+        else{break;}
+        return;
+      }
+    }
+  }
+}
 
 void RtcgetTwifi() {  //联网校时
   String TTime = "";
@@ -201,6 +248,32 @@ void RtcgetTwifi() {  //联网校时
     DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
     rtc.adjust(now);
     //setAlarm(alTime.aMin, alTime.aHour);
+  } else {
+    for (int i = 0; i < 5; i++) {
+      Serial2.println("AT+CFUN=1\r");
+      delay(100);
+      while (Serial2.available()) {
+        //Serial.write(".");
+        Serial.write(Serial2.read());
+      }
+    }
+    getT4G();
+    for (int i = 0; i < 3; i++) {
+      Serial2.println("AT+CSCLK=2\r");
+      delay(100);
+      while (Serial2.available()) {
+        //Serial.write(".");
+        Serial.write(Serial2.read());
+      }
+    }
+    for (int i = 0; i < 3; i++) {
+      Serial2.println("AT+CFUN=4,0\r");
+      delay(100);
+      while (Serial2.available()) {
+        //Serial.write(".");
+        Serial.write(Serial2.read());
+      }
+    }
   }
 }
 void RtcSetTime(int Hour0, int Hour1, int Min0, int Min1) {
