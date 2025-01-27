@@ -3,6 +3,9 @@
 
 [Chinese Documentation](README.md) | [English Documentation](README_en.md)
 
+## Video Demonstration
+[![14.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/14.png)](https://player.bilibili.com/player.html?isOutside=true&aid=113685318076176&bvid=BV1Jmk2Y1ESa&cid=27441235894&p=1)
+
 ## Project Overview
 
 ![9.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/9.png)
