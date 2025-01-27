@@ -344,7 +344,7 @@ String baiduErnieBot_Get(String access_token, String prompt) {
 #include "EEPROM.h"
 int volume = 2;
 void baiduTTS_Get(String access_token, String text) {
-  volume = EEPROM.read(100);
+  volume = EEPROM.read(90);
 
   if (access_token == "") {
     Serial.println("access_token is null");

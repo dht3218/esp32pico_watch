@@ -2,7 +2,7 @@
 // SquareLine Studio version: SquareLine Studio 1.5.0
 // LVGL version: 8.3.11
 // Project name: dht8-3
-
+#include "EEPROM.h"
 #include "ui.h"
 #include <string>
 #include "user_led.h"
@@ -11,6 +11,7 @@
 #include <Arduino.h>
 #include "AisassistantWeb.h"
 #include "SETTING.h"
+
 using std::string;
 
 void getTWifi(lv_event_t* e) {
@@ -18,7 +19,7 @@ void getTWifi(lv_event_t* e) {
   RtcgetTwifi();
   int H = 0;
   int M = 0;
-  int S =  0;
+  int S = 0;
   getTc(&H, &M, &S);
   timeset[0] = H / 10;
   string Ttemp = std::__cxx11::to_string(timeset[0]);
@@ -35,7 +36,39 @@ void getTWifi(lv_event_t* e) {
 }
 
 void SetClock(lv_event_t* e) {
-  RtcSetTime(timeset[0], timeset[1], timeset[2], timeset[3]);
+  if (settimemod == 0) RtcSetTime(timeset[0], timeset[1], timeset[2], timeset[3]);
+  else {
+    int setH = timeset[0] * 10 + timeset[1];
+    int setM = timeset[2] * 10 + timeset[3];
+
+    switch (settimemod) {
+      case 1:
+        addAlarm(1);
+        EEPROM.write(110, setH);
+        EEPROM.write(115, setM);
+        EEPROM.commit();
+        break;
+      case 2:
+        addAlarm(2);
+        EEPROM.write(120, setH);
+        EEPROM.write(125, setM);
+        EEPROM.commit();
+        break;
+      case 3:
+        addAlarm(3);
+        EEPROM.write(130, setH);
+        EEPROM.write(135, setM);
+        EEPROM.commit();
+        break;
+      default: break;
+    }
+    Serial.print("setAlarm");
+    Serial.print(setH);
+    Serial.println(setM);
+    setAlarm();
+  }
+
+
   // Your code here
 }
 
@@ -130,7 +163,7 @@ void setHour0(lv_event_t* e) {
 }
 
 void setHour1(lv_event_t* e) {
-  timeset[1] = (timeset[1] == 4) ? 0 : timeset[1] + 1;
+  timeset[1] = (timeset[1] == 9) ? 0 : timeset[1] + 1;
   string Hour01 = std::__cxx11::to_string(timeset[1]);
   const char* Hour1 = Hour01.c_str();
   lv_label_set_text(ui_hour1label, Hour1);
@@ -208,6 +241,51 @@ void setlightD(lv_event_t* e) {
 
   // Your code here
 }
-void setAssistantWebRecording(int x){
-  AssistantWebRecording=x;
+void setAssistantWebRecording(int x) {
+  AssistantWebRecording = x;
+}
+
+
+void ALARM1cfg(lv_event_t* e) {
+  if (lv_obj_has_state(ui_Alarmkey, LV_STATE_CHECKED)) {
+    addAlarm(1);
+    setAlarm();
+    lv_obj_add_state(ui_Alarmkey, LV_STATE_CHECKED);
+  } else {
+    removeAlarm(1);
+    lv_obj_clear_state(ui_Alarmkey, LV_STATE_CHECKED);
+  }
+}
+
+void ALARM1set(lv_event_t* e) {
+  // Your code here
+}
+
+void ALARM2cfg(lv_event_t* e) {
+  if (lv_obj_has_state(ui_Alarmkey2, LV_STATE_CHECKED)) {
+    addAlarm(2);
+    setAlarm();
+    lv_obj_add_state(ui_Alarmkey2, LV_STATE_CHECKED);
+  } else {
+    removeAlarm(2);
+    lv_obj_clear_state(ui_Alarmkey2, LV_STATE_CHECKED);
+  }
+}
+
+void ALARM2set(lv_event_t* e) {
+}
+
+void ALARM3cfg(lv_event_t* e) {
+  if (lv_obj_has_state(ui_Alarmkey3, LV_STATE_CHECKED)) {
+    addAlarm(3);
+    setAlarm();
+    lv_obj_add_state(ui_Alarmkey3, LV_STATE_CHECKED);
+  } else {
+    removeAlarm(3);
+    lv_obj_clear_state(ui_Alarmkey3, LV_STATE_CHECKED);
+  }
+}
+
+void ALARM3set(lv_event_t* e) {
+  // Your code here
 }

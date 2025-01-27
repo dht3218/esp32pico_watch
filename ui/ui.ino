@@ -51,6 +51,7 @@ void my_print(const char *buf) {
 }
 #endif
 
+
 /* Display flushing */
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) {
   if (dmaBufferSel) {
@@ -76,6 +77,7 @@ IRAM_ATTR void lvgl_task(void *arg) {
     lv_timer_handler();
   }
 }
+extern void print_wakeup_reason();
 extern void led_init();
 extern void MPUsetup();
 extern void lv_port_indev_init(void);
@@ -86,33 +88,66 @@ void setup() {
                         //pinMode(4, OUTPUT);
                         //digitalWrite(4, HIGH);
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
+  Serial.println(EEPROM.read(100));
   livecnt = 0;
-  for (int i = 0; i < 5; i++) {
-    Serial2.println("AT+CFUN=1\r");
-    delay(100);
-    while (Serial2.available()) {
-      //Serial.write(".");
-      Serial.write(Serial2.read());
-    }
+  //int x = 0;
+  Wire.begin(8, 7);
+  RtcSetup0();
+  if (EEPROM.read(100)) setAlarm();
+  //getalarmall(&x, &x, &x, &x, &x, &x);
+  pinMode(35, INPUT_PULLUP);
+  MPUsetup();
+  CW2015wakeUp();
+  print_wakeup_reason();
+  if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_EXT0) {
+    Serial.println("闹钟已触发");
+    alarmmusic();
+    setAlarm();
   }
-  for (int i = 0; i < 2; i++) {
-    Serial2.println("ATE0\r");
-    delay(100);
-    while (Serial2.available()) {
-      //Serial.write(".");
-      Serial.write(Serial2.read());
-    }
+
+  if (EEPROM.read(10) == 1) {
+    Serial.println("deepsleep");
+    EEPROM.write(10, 0);
+    delay(200);
+    EEPROM.commit();
+    esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_ALL);
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_38, 0);
+    esp_deep_sleep_start();
   }
-  for (int i = 0; i < 1; i++) {
-    Serial2.println("AT+CSCLK=0\r");
-    delay(100);
-    while (Serial2.available()) {
-      //Serial.write(".");
-      Serial.write(Serial2.read());
+  //isAlarmedcheck();
+  if (!EEPROM.read(10) == 1) {
+    for (int i = 0; i < 5; i++) {
+      Serial2.println("AT+CFUN=1\r");
+      delay(100);
+      while (Serial2.available()) {
+        //Serial.write(".");
+        Serial.write(Serial2.read());
+      }
+    }
+    for (int i = 0; i < 2; i++) {
+      Serial2.println("ATE0\r");
+      delay(100);
+      while (Serial2.available()) {
+        //Serial.write(".");
+        Serial.write(Serial2.read());
+      }
+    }
+    for (int i = 0; i < 1; i++) {
+      Serial2.println("AT+CSCLK=0\r");
+      delay(100);
+      while (Serial2.available()) {
+        //Serial.write(".");
+        Serial.write(Serial2.read());
+      }
     }
   }
   pinMode(35, INPUT_PULLUP);
+  pinMode(36, INPUT_PULLUP);
+  pinMode(38, INPUT_PULLUP);
+  //gpio_wakeup_enable(GPIO_NUM_35, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 34作为中断引脚，低电平触发中断
+  gpio_wakeup_enable(GPIO_NUM_38, GPIO_INTR_LOW_LEVEL);
   gpio_wakeup_enable(GPIO_NUM_35, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 34作为中断引脚，低电平触发中断
+  gpio_wakeup_enable(GPIO_NUM_36, GPIO_INTR_LOW_LEVEL);
   esp_sleep_enable_gpio_wakeup();
 
   //esp_light_sleep_start();
@@ -161,13 +196,11 @@ void setup() {
   xTaskCreatePinnedToCore(lvgl_task, "lvgl_task", 2 * 8192, NULL, 15, NULL, 1);
   led_init();
   led_set(leddut);
-  Wire.begin(8, 7);
-  RtcSetup0();
-  MPUsetup();
-  CW2015wakeUp();
+
   int H;
   int M;
   int S;
+  getTc(&H, &M, &S);getTc(&H, &M, &S);
   const char *date = getTc(&H, &M, &S);
   if (date) {
     // 提取年份部分（前四个字符）
@@ -179,7 +212,7 @@ void setup() {
     int year = atoi(yearStr);
 
     // 判断年份是否大于2024
-    if (year < 2024) {
+    if (year < 2025) {
       getT4G();
     }
   }
@@ -204,13 +237,7 @@ void setup() {
   }
 
 
-  if (EEPROM.read(10) == 1) {
-    Serial.println("deepsleep");
-    EEPROM.write(10, 0);
-    delay(200);
-    EEPROM.commit();
-    esp_deep_sleep_start();
-  }
+
   lv_timer_create(update_bat_data, 1000, NULL);
   Serial.println("Setup done");
 }

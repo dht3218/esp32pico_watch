@@ -136,12 +136,37 @@ void ui_SETTIME_screen_init(void) {
   lv_obj_set_width(ui_getTWifi, LV_SIZE_CONTENT);   /// 1
   lv_obj_set_height(ui_getTWifi, LV_SIZE_CONTENT);  /// 1
   lv_obj_set_align(ui_getTWifi, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_getTWifi, "网络校时");
+  /*if(settimemod==0)*/ lv_label_set_text(ui_getTWifi, "网络校时");
+  //else lv_label_set_text(ui_getTWifi, "启用");
   ui_object_set_themeable_style_property(ui_getTWifi, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                          _ui_theme_color_Mask2);
   ui_object_set_themeable_style_property(ui_getTWifi, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
                                          _ui_theme_alpha_Mask2);
-
+  timeset[0] = 0;
+  timeset[1] = 0;
+  timeset[2] = 0;
+  timeset[3] = 0;
+  switch (settimemod) {
+    case 1:
+      timeset[0] = hour1 / 10;  // 十位小时
+      timeset[1] = hour1 % 10;  // 个位小时
+      timeset[2] = min1 / 10;   // 十位分钟
+      timeset[3] = min1 % 10;   // 个位分钟
+      break;
+    case 2:
+      timeset[0] = hour2 / 10;  // 十位小时
+      timeset[1] = hour2 % 10;  // 个位小时
+      timeset[2] = min2 / 10;   // 十位分钟
+      timeset[3] = min2 % 10;   // 个位分钟
+      break;
+    case 3:
+      timeset[0] = hour3 / 10;  // 十位小时
+      timeset[1] = hour3 % 10;  // 个位小时
+      timeset[2] = min3 / 10;   // 十位分钟
+      timeset[3] = min3 % 10;   // 个位分钟
+      break;
+    default: break;
+  }
   ui_timeSetBtn = lv_btn_create(ui_SETTIME);
   lv_obj_set_width(ui_timeSetBtn, 84);
   lv_obj_set_height(ui_timeSetBtn, 30);
@@ -187,7 +212,9 @@ void ui_SETTIME_screen_init(void) {
   lv_obj_set_width(ui_hour0label, LV_SIZE_CONTENT);   /// 1
   lv_obj_set_height(ui_hour0label, LV_SIZE_CONTENT);  /// 1
   lv_obj_set_align(ui_hour0label, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_hour0label, "0");
+
+
+  setTimechar(timeset[0], 0);
   ui_object_set_themeable_style_property(ui_hour0label, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                          _ui_theme_color_Front);
   ui_object_set_themeable_style_property(ui_hour0label, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
@@ -211,7 +238,9 @@ void ui_SETTIME_screen_init(void) {
   lv_obj_set_width(ui_hour1label, LV_SIZE_CONTENT);   /// 1
   lv_obj_set_height(ui_hour1label, LV_SIZE_CONTENT);  /// 1
   lv_obj_set_align(ui_hour1label, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_hour1label, "0");
+
+  setTimechar(timeset[1], 1);
+
   ui_object_set_themeable_style_property(ui_hour1label, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                          _ui_theme_color_Front);
   ui_object_set_themeable_style_property(ui_hour1label, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
@@ -235,7 +264,9 @@ void ui_SETTIME_screen_init(void) {
   lv_obj_set_width(ui_min0label, LV_SIZE_CONTENT);   /// 1
   lv_obj_set_height(ui_min0label, LV_SIZE_CONTENT);  /// 1
   lv_obj_set_align(ui_min0label, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_min0label, "0");
+
+  setTimechar(timeset[2], 2);
+
   ui_object_set_themeable_style_property(ui_min0label, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                          _ui_theme_color_Front);
   ui_object_set_themeable_style_property(ui_min0label, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
@@ -259,7 +290,9 @@ void ui_SETTIME_screen_init(void) {
   lv_obj_set_width(ui_min1label, LV_SIZE_CONTENT);   /// 1
   lv_obj_set_height(ui_min1label, LV_SIZE_CONTENT);  /// 1
   lv_obj_set_align(ui_min1label, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_min1label, "0");
+
+  setTimechar(timeset[3], 3);
+
   ui_object_set_themeable_style_property(ui_min1label, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                          _ui_theme_color_Front);
   ui_object_set_themeable_style_property(ui_min1label, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,
@@ -272,7 +305,9 @@ void ui_SETTIME_screen_init(void) {
   lv_obj_set_x(ui_settimeLabel1, 0);
   lv_obj_set_y(ui_settimeLabel1, -70);
   lv_obj_set_align(ui_settimeLabel1, LV_ALIGN_CENTER);
-  lv_label_set_text(ui_settimeLabel1, "时间校准\n------------------\n时                  分");
+  if (settimemod == 0) lv_label_set_text(ui_settimeLabel1, "时间校准\n------------------\n时                  分");
+  else lv_label_set_text(ui_settimeLabel1, "闹钟设定\n------------------\n时                  分");
+
   ui_object_set_themeable_style_property(ui_settimeLabel1, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_COLOR,
                                          _ui_theme_color_Front);
   ui_object_set_themeable_style_property(ui_settimeLabel1, LV_PART_MAIN | LV_STATE_DEFAULT, LV_STYLE_TEXT_OPA,

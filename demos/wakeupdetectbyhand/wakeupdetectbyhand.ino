@@ -60,10 +60,12 @@ void setup() {
   pinMode(35, INPUT_PULLUP);
   pinMode(4, OUTPUT);
   digitalWrite(4,LOW);
-  pinMode(36, INPUT_PULLUP);
+  pinMode(36, INPUT_PULLUP);pinMode(38, INPUT_PULLUP);
+  gpio_wakeup_enable(GPIO_NUM_38, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 35作为中断引脚，低电平触发中断
   gpio_wakeup_enable(GPIO_NUM_35, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 35作为中断引脚，低电平触发中断
   gpio_wakeup_enable(GPIO_NUM_36, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 36作为中断引脚，低电平触发中断
   esp_sleep_enable_gpio_wakeup();
+  esp_sleep_enable_timer_wakeup(30 * 60 * 1000000);
   esp_light_sleep_start();
   Serial.println("wakeup!");
   Serial.println("wakeup!");

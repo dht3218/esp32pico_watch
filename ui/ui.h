@@ -138,6 +138,13 @@ extern lv_obj_t * ui_min0label;
 extern lv_obj_t * ui_Min1;
 extern lv_obj_t * ui_min1label;
 extern lv_obj_t * ui_settimeLabel1;
+extern int hour1;
+extern int min1;
+extern int hour2;
+extern int min2;
+extern int hour3;
+extern int min3;
+extern int settimemod;
 void ui_event_Hour0(lv_event_t * e);
 void ui_event_Hour1(lv_event_t * e);
 void ui_event_Min0(lv_event_t * e);
@@ -188,6 +195,35 @@ void ui_event_ButtonDown5(lv_event_t * e);
 extern lv_obj_t * ui_ButtonDown5;
 extern lv_obj_t * ui_Image1;
 
+// SCREEN: ui_ALARM
+void ui_ALARM_screen_init(void);
+extern lv_obj_t * ui_ALARM;
+extern lv_obj_t * ui_Container13;
+extern lv_obj_t * ui_Container15;
+void ui_event_ButtonBACK9(lv_event_t * e);
+extern lv_obj_t * ui_ButtonBACK9;
+extern lv_obj_t * ui_backtext4;
+extern lv_obj_t * ui_Alarm1;
+void ui_event_Alarmkey(lv_event_t * e);
+extern lv_obj_t * ui_Alarmkey;
+void ui_event_Alarmbtn(lv_event_t * e);
+extern lv_obj_t * ui_Alarmbtn;
+extern lv_obj_t * ui_Alarmtext;
+extern lv_obj_t * ui_Alarm2;
+void ui_event_Alarmkey2(lv_event_t * e);
+extern lv_obj_t * ui_Alarmkey2;
+void ui_event_Alarmbtn2(lv_event_t * e);
+extern lv_obj_t * ui_Alarmbtn2;
+extern lv_obj_t * ui_Alarmtext2;
+extern lv_obj_t * ui_Alarm3;
+void ui_event_Alarmkey3(lv_event_t * e);
+extern lv_obj_t * ui_Alarmkey3;
+void ui_event_Alarmbtn3(lv_event_t * e);
+extern lv_obj_t * ui_Alarmbtn3;
+extern lv_obj_t * ui_Alarmtext3;
+
+
+
 // EVENTS
 
 extern lv_obj_t * ui____initial_actions0;
@@ -198,8 +234,9 @@ LV_IMG_DECLARE(ui_img_icon1_png);    // assets/icon1.png
 LV_IMG_DECLARE(ui_img_icon3_png);    // assets/icon3.png
 LV_IMG_DECLARE(ui_img_icon2_png);    // assets/icon2.png
 LV_IMG_DECLARE(ui_img_icon5_png);    // assets/icon5.png
+LV_IMG_DECLARE(ui_img_icon6_png);    // assets/icon6.png
 LV_IMG_DECLARE(ui_img_flashlight_png);    // assets/Flashlight.png
-extern const lv_img_dsc_t * ui_imgset_icon[5] ;
+extern const lv_img_dsc_t * ui_imgset_icon[6] ;
 // FONTS
 LV_FONT_DECLARE(ui_font_CLOCKfont);
 LV_FONT_DECLARE(ui_font_CLOCKFont2);

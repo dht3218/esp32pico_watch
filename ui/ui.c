@@ -81,9 +81,9 @@ void ui_event_ButtonCen2(lv_event_t *e);
 lv_obj_t *ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-const lv_img_dsc_t *ui_imgset_icon[5] = { &ui_img_icon1_png, &ui_img_icon2_png, &ui_img_icon3_png, &ui_img_icon4_png, &ui_img_icon5_png };
+const lv_img_dsc_t *ui_imgset_icon[6] = { &ui_img_icon1_png, &ui_img_icon2_png, &ui_img_icon3_png, &ui_img_icon4_png, &ui_img_icon5_png, &ui_img_icon6_png };
 int desktopcnt = 1;
-#define AppTotal 5
+#define AppTotal 6
 #define iconNOWnum desktopcnt
 #define iconPREnum (iconNOWnum - 1 < 0) ? desktopcnt - 1 + AppTotal : desktopcnt - 1
 #define iconNEXnum (iconNOWnum + 1 > AppTotal - 1) ? desktopcnt + 1 - AppTotal : desktopcnt + 1
@@ -444,6 +444,11 @@ void ui_event_ButtonCen(lv_event_t *e) {
         led_set(120);
         _ui_screen_change(&ui_LIGHT, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_LIGHT_screen_init);
         break;
+      case 5:
+        dispnow = 5;
+        ui_ALARM_screen_init();
+        _ui_screen_change(&ui_ALARM, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_ALARM_screen_init);
+        break;
       default:
         break;
     }
@@ -527,6 +532,7 @@ void ui_event_ButtonBACK5(lv_event_t *e) {
   lv_event_code_t event_code = lv_event_get_code(e);
 
   if (event_code == LV_EVENT_CLICKED) {
+    dispnow = -1;
     _ui_screen_delete(&ui_CALENDAR);
     _ui_screen_change(&ui_DESK, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_DESK_screen_init);
   }
@@ -582,7 +588,7 @@ lv_obj_t *ui_min0label;
 lv_obj_t *ui_Min1;
 lv_obj_t *ui_min1label;
 lv_obj_t *ui_settimeLabel1;
-
+int settimemod = 0;
 void ui_event_Hour0(lv_event_t *e);
 void ui_event_Hour1(lv_event_t *e);
 void ui_event_Min0(lv_event_t *e);
@@ -624,7 +630,38 @@ lv_obj_t *ui_aiassistantSwitchtext;
 
 
 
-
+// SCREEN: ui_ALARM
+int hour1;
+int min1;
+int hour2;
+int min2;
+int hour3;
+int min3;
+void ui_ALARM_screen_init(void);
+lv_obj_t *ui_ALARM;
+lv_obj_t *ui_Container13;
+lv_obj_t *ui_Container15;
+void ui_event_ButtonBACK9(lv_event_t *e);
+lv_obj_t *ui_ButtonBACK9;
+lv_obj_t *ui_backtext4;
+lv_obj_t *ui_Alarm1;
+void ui_event_Alarmkey(lv_event_t *e);
+lv_obj_t *ui_Alarmkey;
+void ui_event_Alarmbtn(lv_event_t *e);
+lv_obj_t *ui_Alarmbtn;
+lv_obj_t *ui_Alarmtext;
+lv_obj_t *ui_Alarm2;
+void ui_event_Alarmkey2(lv_event_t *e);
+lv_obj_t *ui_Alarmkey2;
+void ui_event_Alarmbtn2(lv_event_t *e);
+lv_obj_t *ui_Alarmbtn2;
+lv_obj_t *ui_Alarmtext2;
+lv_obj_t *ui_Alarm3;
+void ui_event_Alarmkey3(lv_event_t *e);
+lv_obj_t *ui_Alarmkey3;
+void ui_event_Alarmbtn3(lv_event_t *e);
+lv_obj_t *ui_Alarmbtn3;
+lv_obj_t *ui_Alarmtext3;
 
 
 
@@ -644,6 +681,9 @@ void ui_event_ButtonGETTIME(lv_event_t *e) {
   lv_event_code_t event_code = lv_event_get_code(e);
 
   if (event_code == LV_EVENT_CLICKED) {
+    dispnow = 201;
+    settimemod = 0;
+    ui_SETTIME_screen_init();
     _ui_screen_delete(&ui_SETTING);
     _ui_screen_change(&ui_SETTIME, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_SETTIME_screen_init);
   }
@@ -677,12 +717,20 @@ void ui_event_WIFIKEY(lv_event_t *e) {
 
 void ui_event_ButtonBACK2(lv_event_t *e) {
   lv_event_code_t event_code = lv_event_get_code(e);
-
-  if (event_code == LV_EVENT_CLICKED) {
-    dispnow = 2;
-    _ui_screen_delete(&ui_SETTIME);
-    ui_SETTING_screen_init();
-    _ui_screen_change(&ui_SETTING, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_SETTING_screen_init);
+  if (settimemod == 0) {
+    if (event_code == LV_EVENT_CLICKED) {
+      dispnow = 2;
+      _ui_screen_delete(&ui_SETTIME);
+      ui_SETTING_screen_init();
+      _ui_screen_change(&ui_SETTING, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_SETTING_screen_init);
+    }
+  } else {
+    if (event_code == LV_EVENT_CLICKED) {
+      dispnow = 5;
+      //_ui_screen_delete(&ui_SETTIME);
+      ui_ALARM_screen_init();
+      _ui_screen_change(&ui_ALARM, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_ALARM_screen_init);
+    }
   }
 }
 
@@ -875,5 +923,82 @@ void ui_event_ButtonDown5(lv_event_t *e) {
 
   if (event_code == LV_EVENT_CLICKED) {
     setlightD(e);
+  }
+}
+
+
+void ui_event_ButtonBACK9(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
+
+  if (event_code == LV_EVENT_CLICKED) {
+    dispnow = -1;
+    _ui_screen_delete(&ui_ALARM);
+    _ui_screen_change(&ui_DESK, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_DESK_screen_init);
+  }
+}
+
+void ui_event_Alarmkey(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
+
+  if (event_code == LV_EVENT_VALUE_CHANGED) {
+    ALARM1cfg(e);
+  }
+}
+
+void ui_event_Alarmbtn(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
+
+  if (event_code == LV_EVENT_CLICKED) {
+    ALARM1set(e);
+  }
+  if (event_code == LV_EVENT_CLICKED) {
+    dispnow = 201;
+    settimemod = 1;
+    ui_SETTIME_screen_init();
+    _ui_screen_change(&ui_SETTIME, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_SETTIME_screen_init);
+  }
+}
+
+void ui_event_Alarmkey2(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
+
+  if (event_code == LV_EVENT_VALUE_CHANGED) {
+    ALARM2cfg(e);
+  }
+}
+
+void ui_event_Alarmbtn2(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
+
+  if (event_code == LV_EVENT_CLICKED) {
+    ALARM2set(e);
+  }
+  if (event_code == LV_EVENT_CLICKED) {
+    dispnow = 201;
+    settimemod = 2;
+    ui_SETTIME_screen_init();
+    _ui_screen_change(&ui_SETTIME, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_SETTIME_screen_init);
+  }
+}
+
+void ui_event_Alarmkey3(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
+
+  if (event_code == LV_EVENT_VALUE_CHANGED) {
+    ALARM3cfg(e);
+  }
+}
+
+void ui_event_Alarmbtn3(lv_event_t *e) {
+  lv_event_code_t event_code = lv_event_get_code(e);
+
+  if (event_code == LV_EVENT_CLICKED) {
+    ALARM3set(e);
+  }
+  if (event_code == LV_EVENT_CLICKED) {
+    dispnow = 201;
+    settimemod = 3;
+    ui_SETTIME_screen_init();
+    _ui_screen_change(&ui_SETTIME, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_SETTIME_screen_init);
   }
 }

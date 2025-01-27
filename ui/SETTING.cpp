@@ -341,7 +341,7 @@ void handleSetting() {
 int volume=1;
 String city="";
   if (server.hasArg("volume") && server.arg("volume").length() >= 0) {  //判断是否有参数
-    volume = atoi((server.arg("volume")).c_str());    EEPROM.write(100, volume);
+    volume = atoi((server.arg("volume")).c_str());    EEPROM.write(90, volume);
     Serial.println(volume);
     commit = true;
     

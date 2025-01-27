@@ -2,7 +2,7 @@
 // SquareLine Studio version: SquareLine Studio 1.5.0
 // LVGL version: 8.3.11
 // Project name: dht8-3
-#define AppTotal 5
+#define AppTotal 6
 #define iconNOWnum desktopcnt
 #define iconPREnum (iconNOWnum - 1 < 0) ? desktopcnt - 1 + AppTotal : desktopcnt - 1
 #define iconNEXnum (iconNOWnum + 1 > AppTotal - 1) ? desktopcnt + 1 - AppTotal : desktopcnt + 1

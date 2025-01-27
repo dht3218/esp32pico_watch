@@ -181,8 +181,9 @@ void getT4G() {
         if (Tyear >= 2025) {
           DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
           rtc.adjust(now);
+        } else {
+          break;
         }
-        else{break;}
         return;
       }
     }
@@ -207,47 +208,47 @@ void RtcgetTwifi() {  //联网校时
         Serial.println("Error on HTTP request");
         tryt++;
       }
+
+
+      StaticJsonDocument<96> doc;
+
+      DeserializationError error = deserializeJson(doc, TTime);
+
+      if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.f_str());
+        return;
+      }
+      const char* sysTime1 = doc["sysTime1"];  // "20230907233256"
+      String timeString(sysTime1);
+      // 提取年份
+      int Tyear = atoi(timeString.substring(0, 4).c_str());
+
+      // 提取月份
+      int Tmon = atoi(timeString.substring(4, 6).c_str());
+
+      // 提取日期
+      int Tday = atoi(timeString.substring(6, 8).c_str());
+
+      // 提取小时
+      int Thour = atoi(timeString.substring(8, 10).c_str());
+
+      // 提取分钟
+      int Tmin = atoi(timeString.substring(10, 12).c_str());
+
+      // 提取秒钟
+      int Tsec = atoi(timeString.substring(12, 14).c_str());
+      Serial.println(Tyear);
+      Serial.println(Tmon);
+      Serial.println(Tday);
+      Serial.println(Thour);
+      Serial.println(Tmin);
+      Serial.println(Tsec);
+      // setTime(Thour, Tmin, Tsec, Tday, Tmon, Tyear);
+      DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
+      rtc.adjust(now);
+      //setAlarm(alTime.aMin, alTime.aHour);
     }
-    // Stream& input;
-
-    StaticJsonDocument<96> doc;
-
-    DeserializationError error = deserializeJson(doc, TTime);
-
-    if (error) {
-      Serial.print(F("deserializeJson() failed: "));
-      Serial.println(error.f_str());
-      return;
-    }
-    const char* sysTime1 = doc["sysTime1"];  // "20230907233256"
-    String timeString(sysTime1);
-    // 提取年份
-    int Tyear = atoi(timeString.substring(0, 4).c_str());
-
-    // 提取月份
-    int Tmon = atoi(timeString.substring(4, 6).c_str());
-
-    // 提取日期
-    int Tday = atoi(timeString.substring(6, 8).c_str());
-
-    // 提取小时
-    int Thour = atoi(timeString.substring(8, 10).c_str());
-
-    // 提取分钟
-    int Tmin = atoi(timeString.substring(10, 12).c_str());
-
-    // 提取秒钟
-    int Tsec = atoi(timeString.substring(12, 14).c_str());
-    Serial.println(Tyear);
-    Serial.println(Tmon);
-    Serial.println(Tday);
-    Serial.println(Thour);
-    Serial.println(Tmin);
-    Serial.println(Tsec);
-    // setTime(Thour, Tmin, Tsec, Tday, Tmon, Tyear);
-    DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
-    rtc.adjust(now);
-    //setAlarm(alTime.aMin, alTime.aHour);
   } else {
     for (int i = 0; i < 5; i++) {
       Serial2.println("AT+CFUN=1\r");
@@ -306,6 +307,21 @@ void Rtctask(void* arg) {
   }
 }
 
+void setTimechar(int timeset,int num) {
+
+  if ( num <= 3) {
+    string temp = std::__cxx11::to_string(timeset);
+    const char* tempc = temp.c_str();
+    switch (num) {
+      case 0: lv_label_set_text(ui_hour0label, tempc); break;
+      case 1: lv_label_set_text(ui_hour1label, tempc); break;
+      case 2: lv_label_set_text(ui_min0label, tempc); break;
+      case 3: lv_label_set_text(ui_min1label, tempc); break;
+      default:break;
+    }
+  }
+}
+
 void Rtctaskcreate() {
   xTaskCreatePinnedToCore(Rtctask, "Rtc_task", 4096, NULL, 2, &Rtc_task, 0);
 }
@@ -313,5 +329,423 @@ void Rtctaskdelete() {
   if (Rtc_task != NULL) {
     vTaskDelete(Rtc_task);
     Rtc_task = NULL;
+  }
+}
+
+
+struct Alarmt {  //闹钟相关结构体
+  bool ok;       //是否启用闹钟
+  int alarmnum;
+  int hour1;
+  int min1;
+  int hour2;
+  int min2;
+  int hour3;
+  int min3;
+};
+int defaultclock = 1;  //默认转腕亮屏显示的时钟
+Alarmt alTime = {
+  false,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+};
+int clockflag = 0;
+
+bool isAlarmTriggered(void) {
+  uint8_t data;
+  bool flag;
+  Wire.beginTransmission(0x51);
+  Wire.write(0x01);
+  Wire.endTransmission();
+  Wire.requestFrom(0x51, 1);
+  data = Wire.read();
+  flag = bitRead(data, 3);
+  return (flag);
+}
+/////////////////////////////alarm
+#include "EEPROM.h"
+#include "driver/i2s.h"
+#include "esp_log.h"
+#include <math.h>
+#include <string.h>
+
+
+#define I2S_SAMPLE_RATE 16000
+#define I2S_CHANNEL I2S_CHANNEL_FMT_ONLY_LEFT
+#define I2S_DATABITS I2S_BITS_PER_SAMPLE_16BIT
+#define I2S_BUFFER_SIZE (1024 * 2)
+#define I2S_OUT_PORT I2S_NUM_1
+#define I2S_OUT_BCLK 14
+#define I2S_OUT_LRC 2
+#define I2S_OUT_DOUT 27
+typedef struct {
+  char note;
+  int duration;
+} NoteDuration;
+
+const int NOTE_C4 = 262, NOTE_D4 = 294, NOTE_E4 = 330, NOTE_F4 = 349,
+          NOTE_G4 = 392, NOTE_A4 = 440, NOTE_B4 = 494, NOTE_C5 = 523;
+
+const NoteDuration noteDurations[] = {
+  { 's', 250 }, { 'S', 125 }, { 'l', 500 }, { 'L', 1000 }, { 'o', 1000 }, { '0', 1000 }
+};
+
+float Soundscale[8]{
+  0, 261.6, 293.7, 329.6, 349.2, 392, 440, 493.9
+};
+void generate_tone(int16_t* buffer, int length, int frequency, int duration) {
+  double t = 0.0;
+  int samples = (int)(I2S_SAMPLE_RATE * (duration / 1000.0));
+  for (int i = 0; i < samples && i < length; i++) {
+    buffer[i] = (int16_t)(32767 * sin(2 * M_PI * frequency * t));
+    t += 1.0 / I2S_SAMPLE_RATE;
+  }
+  for (int i = samples; i < length; i++) {
+    buffer[i] = 0;
+  }
+}
+
+float soundchoice(char x) {
+  switch (x) {
+    case '0': return Soundscale[0]; break;
+
+    case 'a': return Soundscale[1]; break;
+    case 'b': return Soundscale[2]; break;
+    case 'c': return Soundscale[3]; break;
+    case 'd': return Soundscale[4]; break;
+    case 'e': return Soundscale[5]; break;
+    case 'f': return Soundscale[6]; break;
+    case 'g': return Soundscale[7]; break;
+
+    case '1': return 2 * Soundscale[1]; break;
+    case '2': return 2 * Soundscale[2]; break;
+    case '3': return 2 * Soundscale[3]; break;
+    case '4': return 2 * Soundscale[4]; break;
+    case '5': return 2 * Soundscale[5]; break;
+    case '6': return 2 * Soundscale[6]; break;
+    case '7': return 2 * Soundscale[7]; break;
+
+    case 'A': return 4 * Soundscale[1]; break;
+    case 'B': return 4 * Soundscale[2]; break;
+    case 'C': return 4 * Soundscale[3]; break;
+    case 'D': return 4 * Soundscale[4]; break;
+    case 'E': return 4 * Soundscale[5]; break;
+    case 'F': return 4 * Soundscale[6]; break;
+    case 'G': return 4 * Soundscale[7]; break;
+  }
+}
+void i2s_play_music(const char* music) {
+
+
+  int16_t buffer[I2S_BUFFER_SIZE];
+  int musictick = 0;
+  while (musictick < strlen(music)) {
+    if (digitalRead(35) == LOW) {
+      vTaskDelay(400);  //防止
+      if (digitalRead(35) == LOW) {
+        break;
+      }
+    }
+    char x0 = music[musictick];
+    char x1 = music[musictick + 1];
+
+    float frequency = soundchoice(x0);
+    int duration = 300;  //noteDurations[0].duration;  // 默认时长
+
+    switch (x1) {
+      case 's': duration = 0.75 * duration; break;
+      case 'S': duration = 0.5 * duration; break;
+      case 'l': duration = 1.5 * duration; break;
+      case 'L': duration = 2 * duration; break;
+      default: duration = 1 * duration; break;
+    }
+
+    // 计算总样本数
+    int total_samples = (I2S_SAMPLE_RATE * duration) / 1000;
+
+
+    int samples_per_write = I2S_BUFFER_SIZE;
+
+    // 循环生成音频数据并写入 I2S 缓冲区
+    for (int i = 0; i < total_samples; i += samples_per_write) {
+      int samples_to_generate = (i + samples_per_write > total_samples) ? (total_samples - i) : samples_per_write;
+
+      generate_tone(buffer, I2S_BUFFER_SIZE, frequency, samples_to_generate);
+
+      size_t bytes_written;
+      ESP_ERROR_CHECK(i2s_write(I2S_OUT_PORT, &buffer, sizeof(buffer), &bytes_written, portMAX_DELAY));
+    }
+
+
+    switch (x1) {
+      case 's': musictick += 2; break;
+      case 'S': musictick += 2; break;
+      case 'l': musictick += 2; break;
+      case 'L': musictick += 2; break;
+      case 'o':
+        musictick = 0;
+        vTaskDelay(1000);
+        break;
+      default: musictick = (musictick < strlen(music) - 1) ? musictick + 1 : 0; break;
+    }
+  }
+
+  i2s_driver_uninstall(I2S_OUT_PORT);
+}
+
+
+
+void alarmsetup() {
+  //Serial.begin(115200);
+  pinMode(20, OUTPUT);
+  digitalWrite(20, LOW);
+  pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH);
+  i2s_config_t i2s_config_out = {
+    .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
+    .sample_rate = I2S_SAMPLE_RATE,
+    .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+    .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
+    .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_STAND_I2S),
+    .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
+    .dma_buf_count = 8,
+    .dma_buf_len = 512,
+  };
+  i2s_pin_config_t pin_config = {
+    .bck_io_num = I2S_OUT_BCLK,
+    .ws_io_num = I2S_OUT_LRC,
+    .data_out_num = I2S_OUT_DOUT,
+    .data_in_num = -1
+  };
+  i2s_driver_install(I2S_OUT_PORT, &i2s_config_out, 0, NULL);
+  i2s_set_pin(I2S_OUT_PORT, &pin_config);
+  Serial.println("ok");
+}
+const char* changtingwai = "5l3s5AL0s6As65L0s5l1s23l2s12L005l3s5Al70s6lAl5L05l2s34lg1L006lAlAL07l6s7AL06s7As66s53s10s2L0s53s5Al70s6lAl5l0s5l2s34lg0s1L005L2s34Lg0s1L0000";
+void musicloop(const char* music0) {
+  alarmsetup();
+  while (1) {
+    ESP_LOGI("I2S", "Starting I2S music playback...");
+    i2s_play_music(music0);
+    ESP_LOGI("I2S", "Music playback finished.");
+    if (digitalRead(35) == LOW) break;
+  }
+}
+
+
+
+
+void alarmmusic() {
+  rtc.off_alarm();
+  musicloop(changtingwai);
+}
+
+bool isAlarmedcheck() {
+  // Serial.println("alarmcheck");
+  if (isAlarmTriggered()) {
+    Serial.println("off_alarm");
+    rtc.off_alarm();
+
+
+    if (alTime.ok) {
+      //if (alTime.alarmnum)
+      //alTime.ok = false;
+      Serial.println("闹钟已触发");
+      musicloop(changtingwai);
+      //EEPROM.write(100, int(alTime.ok));
+      //EEPROM.commit();
+      setAlarm();
+      return 1;
+    }
+
+    clockflag = 1;
+  }
+  return 0;
+}
+void alarmget() {
+  DateTime alarmgot = rtc.get_alarm();
+  int H = alarmgot.hour();
+  int M = alarmgot.minute();
+}
+//添加某个闹钟
+void addAlarm(int alarmIndex) {
+  if (alarmIndex >= 1 && alarmIndex <= 3) {
+    alTime.alarmnum |= (1 << (alarmIndex - 1));  // 使用或操作设置对应位为1
+  }
+  alTime.ok = true;
+  EEPROM.write(100, alTime.ok);
+  EEPROM.write(105, alTime.alarmnum);
+  EEPROM.commit();
+
+  Serial.print("alTime.alarmnum");
+  Serial.println(alTime.alarmnum);
+  Serial.print("alTime.ok");
+  Serial.println(alTime.ok);
+}
+
+// 删除某个闹钟
+void removeAlarm(int alarmIndex) {
+  if (alarmIndex >= 1 && alarmIndex <= 3) {
+    alTime.alarmnum &= ~(1 << (alarmIndex - 1));  // 使用与操作清除对应位
+  }
+  EEPROM.write(105, alTime.alarmnum);
+  if (alTime.alarmnum == 0) {
+    alTime.ok = false;
+    EEPROM.write(100, 0);
+  }
+  EEPROM.commit();
+
+  Serial.print("alTime.alarmnum");
+  Serial.println(alTime.alarmnum);
+  Serial.print("alTime.ok");
+  Serial.println(alTime.ok);
+}
+
+// 计算两个时间之间的差值（单位：分钟）
+int timeDifference(int currentHour, int currentMin, int alarmHour, int alarmMin) {
+  int currentTotalMin = currentHour * 60 + currentMin;
+  int alarmTotalMin = alarmHour * 60 + alarmMin;
+
+  // 如果闹钟时间小于当前时间，则加上一天的分钟数（1440分钟）
+  if (alarmTotalMin < currentTotalMin) {
+    alarmTotalMin += 24 * 60;
+  }
+
+  return alarmTotalMin - currentTotalMin;
+}
+int alarmumget() {
+  return alTime.alarmnum;
+}
+// 找出离当前时间最近的闹钟
+int findNearestAlarm(int currentHour, int currentMin) {
+  int nearestAlarmIndex = 0;
+  int smallestDifference = INT_MAX;
+
+  // 遍历所有闹钟
+  for (int i = 1; i <= 3; i++) {
+    // 检查第 i 个闹钟是否启用
+    if (alTime.alarmnum & (1 << (i - 1))) {
+      int alarmHour = 0;
+      int alarmMin = 0;
+
+      // 根据索引选择对应的闹钟时间
+      switch (i) {
+        case 1:
+          alarmHour = alTime.hour1;
+          alarmMin = alTime.min1;
+          break;
+        case 2:
+          alarmHour = alTime.hour2;
+          alarmMin = alTime.min2;
+          break;
+        case 3:
+          alarmHour = alTime.hour3;
+          alarmMin = alTime.min3;
+          break;
+      }
+
+      // 计算当前时间与闹钟时间的差值
+      int difference = timeDifference(currentHour, currentMin, alarmHour, alarmMin);
+
+      // 如果当前闹钟时间更接近，更新最近闹钟索引
+      if (difference != 0) {
+        if (difference < smallestDifference) {
+          smallestDifference = difference;
+          nearestAlarmIndex = i;
+        }
+      }
+    }
+  }
+
+  return nearestAlarmIndex;
+}
+
+
+
+
+
+void getalarmall(int* hour1, int* min1, int* hour2, int* min2, int* hour3, int* min3) {
+  alTime.ok = EEPROM.read(100);
+  alTime.alarmnum = EEPROM.read(105);
+  alTime.hour1 = EEPROM.read(110);
+  alTime.min1 = EEPROM.read(115);
+  alTime.hour2 = EEPROM.read(120);
+  alTime.min2 = EEPROM.read(125);
+  alTime.hour3 = EEPROM.read(130);
+  alTime.min3 = EEPROM.read(135);
+  *hour1 = alTime.hour1;
+  *min1 = alTime.min1;
+  *hour2 = alTime.hour2;
+  *min2 = alTime.min2;
+  *hour3 = alTime.hour3;
+  *min3 = alTime.min3;
+  Serial.print("alTime.ok");
+  Serial.println(alTime.ok);
+  Serial.print("alTime.alarmnum");
+  Serial.println(alTime.alarmnum);
+  Serial.print("alTime1- ");
+  Serial.print(alTime.hour1);
+  Serial.print(":");
+  Serial.println(alTime.min1);
+  Serial.print("alTime2- ");
+  Serial.print(alTime.hour2);
+  Serial.print(":");
+  Serial.println(alTime.min2);
+  Serial.print("alTime3- ");
+  Serial.print(alTime.hour3);
+  Serial.print(":");
+  Serial.println(alTime.min3);
+}
+void setAlarm() {
+
+  int x;
+  getalarmall(&x, &x, &x, &x, &x, &x);
+  DateTime alarm = rtc.now();
+  int H = alarm.hour();
+  int M = alarm.minute();
+  int alarmhour;
+  int alarmmin;
+  switch (findNearestAlarm(H, M)) {
+    case 1:
+      alarmhour = alTime.hour1;
+      alarmmin = alTime.min1;
+      break;
+    case 2:
+      alarmhour = alTime.hour2;
+      alarmmin = alTime.min2;
+      break;
+    case 3:
+      alarmhour = alTime.hour3;
+      alarmmin = alTime.min3;
+      break;
+    default: alarmhour = 255; alarmmin = 255;
+  }
+  Serial.print("alarmchoose");
+  Serial.println(findNearestAlarm(H, M));
+  alarm.setminute(alarmmin);
+  alarm.sethour(alarmhour);
+
+  rtc.set_alarm(alarm, { 1, 1, 0, 0 });
+  rtc.on_alarm();
+  EEPROM.write(100, 1);
+  EEPROM.commit();
+  alTime.ok = true;
+}
+
+void gettimeC(int hour, int min, int alarmnum) {
+  string h = (hour < 10) ? "0" + std::to_string(hour) : std::to_string(hour);
+  string m = (min < 10) ? "0" + std::to_string(min) : std::to_string(min);
+  string t = h + ":" + m + " ";
+  Serial.println(t.c_str());
+  const char* tc = t.c_str();
+  switch (alarmnum) {
+    case 1: lv_label_set_text(ui_Alarmtext, tc); break;
+    case 2: lv_label_set_text(ui_Alarmtext2, tc); break;
+    case 3: lv_label_set_text(ui_Alarmtext3, tc); break;
   }
 }

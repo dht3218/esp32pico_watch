@@ -14,31 +14,75 @@ static void button_read(_lv_indev_drv_t* indev, lv_indev_data_t* data);
 static int8_t button_get_pressed_id(void);
 
 lv_indev_t* indev_button;
+void print_wakeup_reason() {
+    esp_sleep_wakeup_cause_t wakeup_reason;
+    wakeup_reason = esp_sleep_get_wakeup_cause();
 
+    switch (wakeup_reason) {
+        case ESP_SLEEP_WAKEUP_EXT0:
+            Serial.println("通过外部信号 RTC_IO 唤醒");
+            break;
+        case ESP_SLEEP_WAKEUP_EXT1:
+            Serial.println("通过外部信号 RTC_CNTL 唤醒");
+            break;
+        case ESP_SLEEP_WAKEUP_TIMER:
+            Serial.println("通过定时器唤醒");
+            break;
+        case ESP_SLEEP_WAKEUP_TOUCHPAD:
+            Serial.println("通过触摸板唤醒");
+            break;
+        case ESP_SLEEP_WAKEUP_ULP:
+            Serial.println("通过 ULP 程序唤醒");
+            break;
+        case ESP_SLEEP_WAKEUP_GPIO:
+            Serial.println("通过 GPIO 唤醒（轻睡眠模式）");
+            break;
+        case ESP_SLEEP_WAKEUP_UART:
+            Serial.println("通过 UART 唤醒（轻睡眠模式）");
+            break;
+        case ESP_SLEEP_WAKEUP_WIFI:
+            Serial.println("通过 WIFI 唤醒（轻睡眠模式）");
+            break;
+        case ESP_SLEEP_WAKEUP_COCPU:
+            Serial.println("通过 COCPU 中断唤醒");
+            break;
+        case ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIG:
+            Serial.println("通过 COCPU 崩溃唤醒");
+            break;
+        case ESP_SLEEP_WAKEUP_BT:
+            Serial.println("通过 BT 唤醒（轻睡眠模式）");
+            break;
+        default:
+            Serial.printf("唤醒不是由深度睡眠或轻睡眠引起的: %d\n", wakeup_reason);
+            break;
+    }
+}
 extern int mpu_check();
 void taplogic() {
-
+  isAlarmedcheck();
   if (digitalRead(35) == LOW || livecnt >= 500) {
     vTaskDelay(40);  //防止
-    if (digitalRead(35) == LOW|| livecnt >= 500) {
+    if (digitalRead(35) == LOW || livecnt >= 500) {
       vTaskDelay(200);
-      if ((digitalRead(35) != LOW && dispnow != -2)|| livecnt >= 500) {
+      if ((digitalRead(35) != LOW && dispnow != -2) || livecnt >= 500) {
         Serial.println("sleep");
         led_off();
         tft.writecommand(0x10);
         delay(100);
 
-
+        esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_ALL);
 
         pinMode(4, INPUT_PULLDOWN);
         pinMode(35, INPUT_PULLUP);
         pinMode(36, INPUT_PULLUP);
+        pinMode(38, INPUT_PULLUP);
         Rtctaskdelete();
+        gpio_wakeup_enable(GPIO_NUM_38, GPIO_INTR_LOW_LEVEL);
         gpio_wakeup_enable(GPIO_NUM_35, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 34作为中断引脚，低电平触发中断
         gpio_wakeup_enable(GPIO_NUM_36, GPIO_INTR_LOW_LEVEL);  // 使用INT_PIN 34作为中断引脚，低电平触发中断
 
         esp_sleep_enable_gpio_wakeup();
-        esp_sleep_enable_timer_wakeup(30 * 60 * 1000000);
+        esp_sleep_enable_timer_wakeup(30 * 60 * 1000000);  //esp_sleep_enable_timer_wakeup(40 * 60 * 1000000);会有问题，不能是40
 
         vTaskDelay(50);
         //         for (int i = 0; i < 3; i++) {
@@ -50,17 +94,25 @@ void taplogic() {
         //   }
         // }
 
-        esp_light_sleep_start();
-         while (!mpu_check() && !(esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER)&&!(digitalRead(35) == LOW)) esp_light_sleep_start();
+        esp_light_sleep_start();print_wakeup_reason();
+        Serial.println("wakeup");
+        while (!isAlarmedcheck() && !mpu_check() && !(esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER) && !(digitalRead(35) == LOW)) {
+          print_wakeup_reason(); 
+          Serial.println("sleep");
+          esp_light_sleep_start();
+          if (isAlarmedcheck()) break;
+        }
         esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_ALL);
-        livecnt=0;
+        livecnt = 0;
         if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER) {
+          esp_sleep_disable_wakeup_source(ESP_SLEEP_WAKEUP_ALL);
           Serial.println("deepsleep");
           EEPROM.write(10, 1);
           delay(200);
           EEPROM.commit();
           esp_restart();
         }
+
         tft.writecommand(0x11);
         if (dispnow == 1) Rtctaskcreate();
         led_init();
@@ -162,7 +214,8 @@ static void keypad_init(void) {
 
 /*Will be called by the library to read the mouse*/
 static void keypad_read(lv_indev_drv_t* indev_drv, lv_indev_data_t* data) {
-  if (dispnow == 2) {
+  //Serial.println(dispnow);
+  if (dispnow == 2 || dispnow == 5) {
     static uint32_t last_key = 0;
     //Serial.println("keypad_read");
     /*Get the current x and y coordinates*/
@@ -198,7 +251,7 @@ static void keypad_read(lv_indev_drv_t* indev_drv, lv_indev_data_t* data) {
     }
 
     data->key = last_key;
-  } else if (dispnow == 2.1) {
+  } else if (dispnow == 201) {
     static uint32_t last_key = 0;
     //Serial.println("keypad_read");
     /*Get the current x and y coordinates*/
@@ -302,9 +355,7 @@ static void button_init(void) {
 /*Will be called by the library to read the button*/
 
 static void button_read(lv_indev_drv_t* indev_drv, lv_indev_data_t* data) {
-  if (dispnow != 2 && dispnow != 2.1) {
-
-    //Serial.println("BUTTON");
+  if (dispnow != 2 && dispnow != 201 && dispnow != 5) {
     static uint8_t last_btn = 0;
 
     /*Get the pressed button's ID*/

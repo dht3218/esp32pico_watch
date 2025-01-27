@@ -10,24 +10,30 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-void Chatdelete();
-void setBLight(lv_event_t * e);
-void SettingStart(lv_event_t * e);
-void Wifistart(lv_event_t * e);
-void getTWifi(lv_event_t * e);
-void SetClock(lv_event_t * e);
-void setHour0(lv_event_t * e);
-void setHour1(lv_event_t * e);
-void setMinu0(lv_event_t * e);
-void setMinu1(lv_event_t * e);
-void gotuofunc(lv_event_t * e);
-void ChatClick(lv_event_t * e);
-void setAilocal(lv_event_t * e);
-void setlightU(lv_event_t * e);
-void setlightD(lv_event_t * e);
-void setAssistantWebRecording(int x);
-extern int chatstate;
-extern int flashlightval;
+  void Chatdelete();
+  void setBLight(lv_event_t* e);
+  void SettingStart(lv_event_t* e);
+  void Wifistart(lv_event_t* e);
+  void getTWifi(lv_event_t* e);
+  void SetClock(lv_event_t* e);
+  void setHour0(lv_event_t* e);
+  void setHour1(lv_event_t* e);
+  void setMinu0(lv_event_t* e);
+  void setMinu1(lv_event_t* e);
+  void gotuofunc(lv_event_t* e);
+  void ChatClick(lv_event_t* e);
+  void setAilocal(lv_event_t* e);
+  void setlightU(lv_event_t* e);
+  void setlightD(lv_event_t* e);
+  void setAssistantWebRecording(int x);
+  void ALARM1cfg(lv_event_t* e);
+  void ALARM1set(lv_event_t* e);
+  void ALARM2cfg(lv_event_t* e);
+  void ALARM2set(lv_event_t* e);
+  void ALARM3cfg(lv_event_t* e);
+  void ALARM3set(lv_event_t* e);
+  extern int chatstate;
+  extern int flashlightval;
 #ifdef __cplusplus
 } /*extern "C"*/
 #endif
