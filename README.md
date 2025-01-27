@@ -3,10 +3,7 @@
 [中文文档](README.md) | [English Documentation](README_en.md)
 
 ## Video Demonstration
-
-For a detailed demonstration of the esp32pico_watch, please watch the following video:
-
-<iframe src="https://player.bilibili.com/player.html?bvid=0AbVd6G&page=1" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+<iframe src="//player.bilibili.com/player.html?isOutside=true&aid=113685318076176&bvid=BV1Jmk2Y1ESa&cid=27441235894&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>ps://player.bilibili.com/player.html?bvid=0AbVd6G&page=1" width="560" height="315" frameborder="0" allowfullscreen></iframe>
 
 ## 项目概览
 ![9.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/9.png)
