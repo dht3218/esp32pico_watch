@@ -40,7 +40,7 @@ This project successfully designs and implements an end-side speech processing s
       - `1234567` for mid-range notes (do-si)
       - `A-G` for high notes (do-si)
       - `0` for rest
-- Duration modifiers: 
+    - Duration modifiers: 
       - Default speed = 1x
       - `s` = 0.75x
       - `S` = 0.5x
