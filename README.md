@@ -24,6 +24,7 @@
 该手表所搭载的扬声器，目前支持3个八度的音色（使用mp3等格式文件空间占用太大，不适合，特此使用该方法）
 首先，a-g表示低音do-xi ；1234567表示中音do-xi ；A-G表示高音do-xi；0表示静止符
 支持调整音阶的时长；默认为1倍速，s为0.75，S为0.5；l为1.5,L为2倍速
+
 <img src="https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/13.png" style="width:50%;">
 #### 请看示例代码（长亭外）5l3s5AL0s6As65L0s5l1s23l2s12L005l3s5Al70s6lAl5L05l2s34lg1L006lAlAL07l6s7AL06s7As66s53s10s2L0s53s5Al70s6lAl5l0s5l2s34lg0s1L005L2s34Lg0s1L0000
 例如第一段5l表示5音阶加长到1.5倍；3s表示3缩短到0.75
