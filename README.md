@@ -2,10 +2,13 @@
 # 基于ESP32微控制器的端侧语音处理系统设计与产品实现
 [中文文档](README.md) | [English Documentation](README_en.md)
 
+## Video Demonstration
+
+For a detailed demonstration of the esp32pico_watch, please watch the following video:
+
+<iframe src="https://player.bilibili.com/player.html?bvid=0AbVd6G&page=1" width="560" height="315" frameborder="0" allowfullscreen></iframe>
 
 ## 项目概览
-[![Watch Video](https://img.shields.io/badge/Watch%20Video-Click%20Here-blue)](https://b23.tv/0AbVd6G)
-
 ![9.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/9.png)
 ![10.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/10.png)
 
