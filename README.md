@@ -4,7 +4,8 @@
 
 
 ## 项目概览
-视频演示https://b23.tv/0AbVd6G
+[![Watch Video](https://img.shields.io/badge/Watch%20Video-Click%20Here-blue)](https://b23.tv/0AbVd6G)
+
 ![9.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/9.png)
 ![10.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/10.png)
 
