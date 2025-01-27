@@ -1,6 +1,6 @@
 # esp32pico_watch 项目
 # 基于ESP32微控制器的端侧语音处理系统设计与产品实现
-
+[中文文档](README.md) | [English Documentation](README_en.md)
 ## 项目概览
 
 ![9.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/9.png)
