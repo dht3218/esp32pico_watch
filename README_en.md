@@ -48,9 +48,9 @@ This project successfully designs and implements an end-side speech processing s
       - `L` = 2x
     - Example code (`Long Ting Wai`): `5l3s5AL0s6As65L0s5l1s23l2s12L005l3s5Al70s6lAl5L05l2s34lg1L006lAlAL07l6s7AL06s7As66s53s10s2L0s53s5Al70s6lAl5L05l2s34lg0s1L005L2s34Lg0s1L0000`
 For example:
-`5l` indicates that the duration of note 5 is extended to 1.5 times.
-`3s` indicates that the duration of note 3 is shortened to 0.75 times.
-    - Currently does not support consecutive extensions like `5LL`.
+-`5l` indicates that the duration of note 5 is extended to 1.5 times.
+-`3s` indicates that the duration of note 3 is shortened to 0.75 times.
+    - Currently does not support consecutive extensions like -`5LL`.
 
 #### Alarm Setting Diagram
 ![12.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/12.png)
