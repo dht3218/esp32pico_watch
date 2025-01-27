@@ -3,12 +3,7 @@
 [中文文档](README.md) | [English Documentation](README_en.md)
 
 ## Video Demonstration
-For more detailed information on the development and implementation of speech recognition models on ESP32, you can refer to the following article:
-
-[Building Speech Recognition Models on ESP32](https://zhuanlan.zhihu.com/p/509162670)
-
-This article provides an in-depth look at the process of deploying speech recognition models on ESP32 microcontrollers, including data collection, model training, and deployment strategies.
-
+[![14.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/14.png)](https://player.bilibili.com/player.html?aid=683633468&bvid=BV1jS4y1w7SW&cid=711074429&page=1)
 
 ## 项目概览
 ![9.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/9.png)
