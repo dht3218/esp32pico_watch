@@ -3,7 +3,7 @@
 [中文文档](README.md) | [English Documentation](README_en.md)
 
 ## Video Demonstration
-[![14.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/14.png)](https://player.bilibili.com/player.html?aid=683633468&bvid=BV1jS4y1w7SW&cid=711074429&page=1)
+[![14.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/14.png)]([https://player.bilibili.com/player.html?aid=683633468&bvid=BV1jS4y1w7SW&cid=711074429&page=1](https://www.bilibili.com/video/BV1Jmk2Y1ESa/?buvid=XX3C57334081306B4CBB4675E435C0AA8E5C3&is_story_h5=false&mid=zAE9vinGgEsRNT1UtiNNwg%3D%3D&plat_id=147&share_from=ugc&share_medium=android&share_plat=android&share_session_id=aab11d75-3b5e-42b3-a845-712cc455ad19&share_source=COPY&share_tag=s_i&timestamp=1734703381&unique_k=0AbVd6G&up_id=32623182&vd_source=dbeeaf4f5af3151c749d6eba2cd92f4a))
 
 ## 项目概览
 ![9.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/9.png)
