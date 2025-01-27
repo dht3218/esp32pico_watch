@@ -16,6 +16,21 @@
 
 ## 更新内容
 ### 2025.1.22新增：1.抬腕亮屏实装 demo/wakeupdetectbyhand；2.RTC更新-4G网络更新模式
+### 2025.1.27新增：--闹钟实装
+#### 新增闹钟程序，可同时设置三个闹钟，使用switch切换开启/关闭；
+![11.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/10.png)
+#### 闹钟在休眠模式下和正常工作模式下均有效
+#### demo/alarmmusic.ino为闹钟铃声demo，提供了一种使用特殊编码格式实现
+该手表所搭载的扬声器，目前支持3个八度的音色（使用mp3等格式文件空间占用太大，不适合，特此使用该方法）
+首先，a-g表示低音do-xi ；1234567表示中音do-xi ；A-G表示高音do-xi；0表示静止符
+支持调整音阶的时长；默认为1倍速，s为0.75，S为0.5；l为1.5,L为2倍速
+请看示例代码（长亭外）
+![13.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/13.png)
+音频代码：5l3s5AL0s6As65L0s5l1s23l2s12L005l3s5Al70s6lAl5L05l2s34lg1L006lAlAL07l6s7AL06s7As66s53s10s2L0s53s5Al70s6lAl5l0s5l2s34lg0s1L005L2s34Lg0s1L0000
+例如第一段5l表示5音阶加长到1.5倍；3s表示3缩短到0.75
+但暂时不支持5LL这样连续的加长
+#### 闹钟设定图示
+![12.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/12.png)
 
 ## 效果展示
 ### 3.1.0操作逻辑介绍
