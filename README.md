@@ -1,8 +1,11 @@
 # esp32pico_watch 项目
 # 基于ESP32微控制器的端侧语音处理系统设计与产品实现
 [中文文档](README.md) | [English Documentation](README_en.md)
-## 项目概览
 
+## Video Demonstration
+[![14.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/14.png)](https://player.bilibili.com/player.html?aid=683633468&bvid=BV1jS4y1w7SW&cid=711074429&page=1)
+
+## 项目概览
 ![9.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/9.png)
 ![10.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/10.png)
 
@@ -22,8 +25,27 @@
 #### 闹钟在休眠模式下和正常工作模式下均有效
 #### demo/alarmmusic.ino为闹钟铃声demo，提供了一种使用特殊编码格式实现
 该手表所搭载的扬声器，目前支持3个八度的音色（使用mp3等格式文件空间占用太大，不适合，特此使用该方法）
-首先，a-g表示低音do-xi ；1234567表示中音do-xi ；A-G表示高音do-xi；0表示静止符
-支持调整音阶的时长；默认为1倍速，s为0.75，S为0.5；l为1.5,L为2倍速
+### 音符表示方法
+
+音符的表示方式如下：
+- `a-g` 表示低音（do-si）
+- `1234567` 表示中音（do-si）
+- `A-G` 表示高音（do-si）
+- `0` 表示休止符
+
+### 时值修饰符
+
+默认速度为 1 倍速，支持以下修饰符：
+- `s` 表示 0.75 倍速
+- `S` 表示 0.5 倍速
+- `l` 表示 1.5 倍速
+- `L` 表示 2 倍速
+
+例如：
+- `5l` 表示将音符 5 的时长延长到 1.5 倍
+- `3s` 表示将音符 3 的时长缩短到 0.75 倍
+
+目前不支持连续的延长符号，如 `5LL`。
 
 <img src="https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/13.png" style="width:50%;">
 #### 请看示例代码（长亭外）5l3s5AL0s6As65L0s5l1s23l2s12L005l3s5Al70s6lAl5L05l2s34lg1L006lAlAL07l6s7AL06s7As66s53s10s2L0s53s5Al70s6lAl5l0s5l2s34lg0s1L005L2s34Lg0s1L0000
@@ -97,7 +119,9 @@ AI语音助手没有独立的桌面图标入口，而是使用长按功能键在
 
 通过类似于AI问答的流程，将采集到的语音信息转文字后让云端LLM模型自主判断，返回什么参数，本地解析返回之后执行对应指令，具有一定的任务自主规划能力。
 prompt如下：
-`***你需要根据我提供的信息进行推理并返回指定的数据：你现在可以控制一块智能手表，返回值只允许必须从以下范围取出：（setting，light，calendar，clock），请务必按要求根据下面的任务要求返回指定的字符串，不允许返回上述字符串以外的任何值，如calendar，日期相关请返回calendar，时刻相关返回clock以下是任务：***`
+```
+你需要根据我提供的信息进行推理并返回指定的数据：你现在可以控制一块智能手表，返回值只允许必须从以下范围取出：（setting，light，calendar，clock），请务必按要求根据下面的任务要求返回指定的字符串，不允许返回上述字符串以外的任何值，如calendar，日期相关请返回calendar，时刻相关返回clock以下是任务：
+```
 通过以上设定可以使系统按预期工作。
 使用prompt直接接入LLM的好处是，不需要针对具体长期收集大量训练数据集进行微调，只需要逐步优化prompt提示词即可，降低使用者的调节门槛，同时减少对特定模型的依赖性，实现去耦的效果。
 
