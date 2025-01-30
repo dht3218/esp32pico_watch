@@ -8,6 +8,7 @@
 #include "ui_helpers.h"
 #include "clock.h"
 #include "cw2015.h"
+#include "memo.h"
 #include <arduino.h>
 
 #include "AiassistantLocal.h"
@@ -77,13 +78,17 @@ lv_obj_t *ui_ButtonBACK5;
 void ui_event_ButtonCen2(lv_event_t *e);
 // CUSTOM VARIABLES
 
+
+
+
+
 // EVENTS
 lv_obj_t *ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-const lv_img_dsc_t *ui_imgset_icon[6] = { &ui_img_icon1_png, &ui_img_icon2_png, &ui_img_icon3_png, &ui_img_icon4_png, &ui_img_icon5_png, &ui_img_icon6_png };
+const lv_img_dsc_t *ui_imgset_icon[7] = { &ui_img_icon1_png, &ui_img_icon2_png, &ui_img_icon3_png, &ui_img_icon4_png, &ui_img_icon5_png, &ui_img_icon6_png, &ui_img_icon7_png };
 int desktopcnt = 1;
-#define AppTotal 6
+#define AppTotal 7
 #define iconNOWnum desktopcnt
 #define iconPREnum (iconNOWnum - 1 < 0) ? desktopcnt - 1 + AppTotal : desktopcnt - 1
 #define iconNEXnum (iconNOWnum + 1 > AppTotal - 1) ? desktopcnt + 1 - AppTotal : desktopcnt + 1
@@ -448,6 +453,13 @@ void ui_event_ButtonCen(lv_event_t *e) {
         dispnow = 5;
         ui_ALARM_screen_init();
         _ui_screen_change(&ui_ALARM, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_ALARM_screen_init);
+        break;
+
+              case 6:
+        dispnow = 6;
+        
+        ui_REMINDER_screen_init();
+        _ui_screen_change(&ui_REMINDER, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_REMINDER_screen_init);
         break;
       default:
         break;
@@ -1001,4 +1013,48 @@ void ui_event_Alarmbtn3(lv_event_t *e) {
     ui_SETTIME_screen_init();
     _ui_screen_change(&ui_SETTIME, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_SETTIME_screen_init);
   }
+}
+
+
+// SCREEN: ui_REMINDER
+void ui_REMINDER_screen_init(void);
+lv_obj_t * ui_REMINDER;
+lv_obj_t * ui_Container12;
+void ui_event_ButtonBACK8(lv_event_t * e);
+lv_obj_t * ui_ButtonBACK8;
+lv_obj_t * ui_backtext3;
+lv_obj_t * ui_TextArea1;
+void ui_event_MemoRefresh(lv_event_t * e);
+lv_obj_t * ui_MemoRefresh;
+lv_obj_t * ui_MemoRefreshtext;
+void ui_event_reminderDropdown2(lv_event_t * e);
+lv_obj_t * ui_reminderDropdown2;
+// CUSTOM VARIABLES
+
+const char* reminderC[5];
+void ui_event_reminderDropdown2(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_VALUE_CHANGED) {
+        changereminder(e);
+    }
+}
+void ui_event_MemoRefresh(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+        Memorefresh(e);
+    }
+}
+void ui_event_ButtonBACK8(lv_event_t * e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+    if(event_code == LV_EVENT_CLICKED) {
+      dispnow=-1;
+        _ui_screen_delete(&ui_REMINDER);
+        _ui_screen_change(&ui_DESK, LV_SCR_LOAD_ANIM_FADE_ON, 200, 0, &ui_DESK_screen_init);
+    }
 }

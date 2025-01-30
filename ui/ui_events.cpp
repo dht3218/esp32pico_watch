@@ -11,7 +11,7 @@
 #include <Arduino.h>
 #include "AisassistantWeb.h"
 #include "SETTING.h"
-
+#include "memo.h"
 using std::string;
 
 void getTWifi(lv_event_t* e) {
@@ -288,4 +288,30 @@ void ALARM3cfg(lv_event_t* e) {
 
 void ALARM3set(lv_event_t* e) {
   // Your code here
+}
+void changereminder(lv_event_t* e) {
+  // Your code here
+  int index = lv_dropdown_get_selected(ui_reminderDropdown2);
+  String reminder = EEPROM.readString(200 + index * 100);
+  reminderC[index] = reminder.c_str();
+
+  lv_textarea_set_text(ui_TextArea1, reminderC[index]);
+  const char* gxfc = "cS6l5l6l5S3L0L0s3s6l5l6l5s6L00S3s2S3l2s1fl00S3s2S3l2s12l0s11l2l3l56L      ";
+  if (strstr(reminderC[index], "恭喜发财") != NULL) {
+    vTaskDelay(200);
+    musicloop(gxfc);
+  }
+}
+void Memorefresh(lv_event_t* e) {
+  getReminder();
+  int index = lv_dropdown_get_selected(ui_reminderDropdown2);
+  String reminder = EEPROM.readString(200 + index * 100);
+  reminderC[index] = reminder.c_str();
+
+  lv_textarea_set_text(ui_TextArea1, reminderC[index]);
+  const char* gxfc = "cS6l5l6l5S3L0L0s3s6l5l6l5s6L00S3s2S3l2s1fl00S3s2S3l2s12l0s11l2l3l56L      ";
+  if (strstr(reminderC[index], "恭喜发财") != NULL) {
+    vTaskDelay(200);
+    musicloop(gxfc);
+  }
 }

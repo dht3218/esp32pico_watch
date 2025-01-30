@@ -215,7 +215,7 @@ static void keypad_init(void) {
 /*Will be called by the library to read the mouse*/
 static void keypad_read(lv_indev_drv_t* indev_drv, lv_indev_data_t* data) {
   //Serial.println(dispnow);
-  if (dispnow == 2 || dispnow == 5) {
+  if (dispnow == 2 || dispnow == 5|| dispnow == 6) {
     static uint32_t last_key = 0;
     //Serial.println("keypad_read");
     /*Get the current x and y coordinates*/
@@ -355,7 +355,7 @@ static void button_init(void) {
 /*Will be called by the library to read the button*/
 
 static void button_read(lv_indev_drv_t* indev_drv, lv_indev_data_t* data) {
-  if (dispnow != 2 && dispnow != 201 && dispnow != 5) {
+  if (dispnow != 2 && dispnow != 201 && dispnow != 5&& dispnow != 6) {
     static uint8_t last_btn = 0;
 
     /*Get the pressed button's ID*/

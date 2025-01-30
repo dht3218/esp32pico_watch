@@ -78,7 +78,7 @@ void i2s_play_music(const char *music) {
     char x1 = music[musictick + 1];
 
     float frequency = soundchoice(x0);
-    int duration = 300;  //noteDurations[0].duration;  // 默认时长
+    int duration = 250;  //noteDurations[0].duration;  // 默认时长
 
     switch (x1) {
       case 's': duration = 0.75 * duration; break;
@@ -88,21 +88,21 @@ void i2s_play_music(const char *music) {
       default: duration = 1 * duration; break;
     }
 
-        // 计算总样本数
-        int total_samples = (I2S_SAMPLE_RATE * duration) / 1000;
+    // 计算总样本数
+    int total_samples = (I2S_SAMPLE_RATE * duration) / 1000;
 
 
-        int samples_per_write = I2S_BUFFER_SIZE;
+    int samples_per_write = I2S_BUFFER_SIZE;
 
-        // 循环生成音频数据并写入 I2S 缓冲区
-        for (int i = 0; i < total_samples; i += samples_per_write) {
-            int samples_to_generate = (i + samples_per_write > total_samples) ? (total_samples - i) : samples_per_write;
+    // 循环生成音频数据并写入 I2S 缓冲区
+    for (int i = 0; i < total_samples; i += samples_per_write) {
+      int samples_to_generate = (i + samples_per_write > total_samples) ? (total_samples - i) : samples_per_write;
 
-            generate_tone(buffer, I2S_BUFFER_SIZE, frequency, samples_to_generate);
+      generate_tone(buffer, I2S_BUFFER_SIZE, frequency, samples_to_generate);
 
-            size_t bytes_written;
-            ESP_ERROR_CHECK(i2s_write(I2S_OUT_PORT, &buffer, sizeof(buffer), &bytes_written, portMAX_DELAY));
-        }
+      size_t bytes_written;
+      ESP_ERROR_CHECK(i2s_write(I2S_OUT_PORT, &buffer, sizeof(buffer), &bytes_written, portMAX_DELAY));
+    }
 
 
     switch (x1) {
@@ -171,6 +171,7 @@ void playAudio_Zai(void) {
 void setup() {
   Serial.begin(115200);
   pinMode(20, OUTPUT);
+  pinMode(35, INPUT_PULLUP);
   digitalWrite(20, LOW);
   pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
@@ -197,8 +198,16 @@ void setup() {
 }
 
 void loop() {
-  const char *changtingwai = "5l3s5AL0s6As65L0s5l1s23l2s12L005l3s5Al70s6lAl5L05l2s34lg1L006lAlAL07l6s7AL06s7As66s53s10s2L0s53s5Al70s6lAl5l0s5l2s34lg0s1L005L2s34Lg0s1L0000";
-  ESP_LOGI("I2S", "Starting I2S music playback...");
-  i2s_play_music(music0);
-  ESP_LOGI("I2S", "Music playback finished.");
+  if (digitalRead(35) == LOW) {
+    const char *changtingwai = "BSCBsEBsCBlBsBSCBsA6A6lBsCBsEBsCBl6s6SA6s51010BlClBSCBsA6lAl6lBlClElClBSCBs6AlAA6sA3s56sA3s56sA3s56s56l6sA3s56sA3s56sA3s56s563sFlElESCLFSGFsEFsECl3sFlElFEsFLGFsEFsECSECsBSCBsA6l0sCBSCBsABl0sAAlBlClEsFLFLFsFsFFsEF03s6l6s56s33s56SA6s56l3s5AlAsABsCAsBC0CsBAl3sBBsABs66sABSCBSABsA6sACsCBsACl5l6l0l0s36l6s56s33s56SA6s56l3s5AAsABsCsAsBsCCsBA3sBBsABs66sABSCBSABsA6SACsCBsACl5l6L0l5ALASBCLCSEEsClBlABLBs6sABS6BsCDSEsDsCBL0sEEsCBsA5l6L66s56s56GGGG0L";
+    ESP_LOGI("I2S", "Starting I2S music playback...");
+    i2s_play_music(changtingwai);
+    ESP_LOGI("I2S", "Music playback finished.");
+  }
+  while (Serial.available()) {
+    String a = Serial.readString();
+    i2s_play_music(a.c_str());
+    //Serial.write(".");
+    Serial.println(a);
+  }
 }

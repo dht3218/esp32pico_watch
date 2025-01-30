@@ -188,6 +188,23 @@ void getT4G() {
       }
     }
   }
+    for (int i = 0; i < 3; i++) {
+    Serial2.println("AT+CSCLK=2\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
+    }
+  }
+
+  for (int i = 0; i < 3; i++) {
+    Serial2.println("AT+CFUN=4,0\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
+    }
+  }
 }
 
 void RtcgetTwifi() {  //联网校时

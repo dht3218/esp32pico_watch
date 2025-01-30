@@ -200,7 +200,8 @@ void setup() {
   int H;
   int M;
   int S;
-  getTc(&H, &M, &S);getTc(&H, &M, &S);
+  getTc(&H, &M, &S);
+  getTc(&H, &M, &S);
   const char *date = getTc(&H, &M, &S);
   if (date) {
     // 提取年份部分（前四个字符）
@@ -215,6 +216,9 @@ void setup() {
     if (year < 2025) {
       getT4G();
     }
+
+
+
   }
 
 

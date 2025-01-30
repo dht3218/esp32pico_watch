@@ -32,6 +32,8 @@ extern "C" {
   void ALARM2set(lv_event_t* e);
   void ALARM3cfg(lv_event_t* e);
   void ALARM3set(lv_event_t* e);
+  void changereminder(lv_event_t * e);
+  void Memorefresh(lv_event_t * e);
   extern int chatstate;
   extern int flashlightval;
 #ifdef __cplusplus

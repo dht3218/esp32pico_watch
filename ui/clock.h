@@ -17,6 +17,8 @@ extern "C" {
   const char* getTc(int* H, int* M, int* S);
   void gettimeC(int hour, int min, int alarmnum);
   void getT4G();
+
+  void musicloop(const char* music0);
   void RtcSetup();
   void RtcSetup0();
   void RtcgetTwifi();

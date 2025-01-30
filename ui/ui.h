@@ -222,8 +222,21 @@ void ui_event_Alarmbtn3(lv_event_t * e);
 extern lv_obj_t * ui_Alarmbtn3;
 extern lv_obj_t * ui_Alarmtext3;
 
-
-
+// SCREEN: ui_REMINDER
+extern const char* reminderC[5];
+void ui_REMINDER_screen_init(void);
+extern lv_obj_t * ui_REMINDER;
+extern lv_obj_t * ui_Container12;
+void ui_event_ButtonBACK8(lv_event_t * e);
+extern lv_obj_t * ui_ButtonBACK8;
+extern lv_obj_t * ui_backtext3;
+extern lv_obj_t * ui_TextArea1;
+void ui_event_MemoRefresh(lv_event_t * e);
+extern lv_obj_t * ui_MemoRefresh; 
+extern lv_obj_t * ui_MemoRefreshtext;
+void ui_event_reminderDropdown2(lv_event_t * e);
+extern lv_obj_t * ui_reminderDropdown2;
+// CUSTOM VARIABLES
 // EVENTS
 
 extern lv_obj_t * ui____initial_actions0;
@@ -235,8 +248,9 @@ LV_IMG_DECLARE(ui_img_icon3_png);    // assets/icon3.png
 LV_IMG_DECLARE(ui_img_icon2_png);    // assets/icon2.png
 LV_IMG_DECLARE(ui_img_icon5_png);    // assets/icon5.png
 LV_IMG_DECLARE(ui_img_icon6_png);    // assets/icon6.png
+LV_IMG_DECLARE(ui_img_icon7_png);    // assets/icon6.png
 LV_IMG_DECLARE(ui_img_flashlight_png);    // assets/Flashlight.png
-extern const lv_img_dsc_t * ui_imgset_icon[6] ;
+extern const lv_img_dsc_t * ui_imgset_icon[7] ;
 // FONTS
 LV_FONT_DECLARE(ui_font_CLOCKfont);
 LV_FONT_DECLARE(ui_font_CLOCKFont2);
