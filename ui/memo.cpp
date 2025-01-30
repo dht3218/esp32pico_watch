@@ -11,8 +11,8 @@
 String reminder[5];
 
 // 巴法云的API地址和参数
-String UID = "7eb1ac59940547489d7a779e2111a151";
-String TOPIC = "message";  //主题名字，可在控制台新建
+String UID = "";
+String TOPIC = "";  //主题名字，可在控制台新建
 int calculateCIPSENDLength(String uid, String topic) {
   String data = "cmd=9&uid=" + uid + "&topic=" + topic;
   return data.length();
