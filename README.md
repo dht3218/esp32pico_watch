@@ -2,7 +2,7 @@
 # 基于ESP32微控制器的端侧语音处理系统设计与产品实现
 [中文文档](README.md) | [English Documentation](README_en.md)
 
-## 视频演示
+## 视频演示（点击播放）
 [![15.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/15.png)](https://player.bilibili.com/player.html?isOutside=true&aid=113915182712293&bvid=BV1EtF3eWEiY&cid=28147060281&p=1)
 [![14.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/14.png)](https://player.bilibili.com/player.html?isOutside=true&aid=113685318076176&bvid=BV1Jmk2Y1ESa&cid=27441235894&p=1)
 
