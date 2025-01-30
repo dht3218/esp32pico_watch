@@ -3,6 +3,7 @@
 [中文文档](README.md) | [English Documentation](README_en.md)
 
 ## 视频演示
+[![15.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/15.png)](https://player.bilibili.com/player.html?isOutside=true&aid=113915182712293&bvid=BV1EtF3eWEiY&cid=28147060281&p=1)
 [![14.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/14.png)](https://player.bilibili.com/player.html?isOutside=true&aid=113685318076176&bvid=BV1Jmk2Y1ESa&cid=27441235894&p=1)
 
 ## 项目概览
@@ -18,7 +19,9 @@
 - **用户交互**：通过手势传感器和实体按钮实现用户交互，并具备云端语音识别助手功能。
 
 ## 更新内容
-### 2025.1.22新增：1.抬腕亮屏实装 demo/wakeupdetectbyhand；2.RTC更新-4G网络更新模式
+### 2025.1.30新增：--备忘录（4G）实装
+巴法云作为中转服务器，可在手机上使用配套小程序进行无线设置，最多同时存储5条备忘信息
+![16.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/16.png)
 ### 2025.1.27新增：--闹钟实装
 #### 新增闹钟程序，可同时设置三个闹钟，使用switch切换开启/关闭；
 ![11.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/11.png)
@@ -53,6 +56,8 @@
 但暂时不支持5LL这样连续的加长
 #### 闹钟设定图示
 ![12.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/12.png)
+
+### 2025.1.22新增：1.抬腕亮屏实装 demo/wakeupdetectbyhand；2.RTC更新-4G网络更新模式
 
 ## 效果展示
 ### 3.1.0操作逻辑介绍
