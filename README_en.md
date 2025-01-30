@@ -4,6 +4,7 @@
 [Chinese Documentation](README.md) | [English Documentation](README_en.md)
 
 ## Video Demonstration
+[![15.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/15.png)](https://player.bilibili.com/player.html?isOutside=true&aid=113915182712293&bvid=BV1EtF3eWEiY&cid=28147060281&p=1)
 [![14.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/14.png)](https://player.bilibili.com/player.html?isOutside=true&aid=113685318076176&bvid=BV1Jmk2Y1ESa&cid=27441235894&p=1)
 
 ## Project Overview
@@ -24,6 +25,10 @@ This project successfully designs and implements an end-side speech processing s
 
 ## Update Logs
 
+### 2025.1.30 Added: --Memo (4G) Implementation
+Bafayun is used as the intermediary server. Wireless settings can be configured via the accompanying mini-program on a smartphone, with a maximum capacity of storing 5 memo messages simultaneously.
+![16.png](https://raw.githubusercontent.com/dht3218/esp32pico_watch/main/pictures/16.png)
+
 ### 2025.1.22 Added:
 1. Wrist-lift screen wake-up demo: `demo/wakeupdetectbyhand`
 2. RTC update - 4G network update mode
@@ -41,7 +46,7 @@ This project successfully designs and implements an end-side speech processing s
       - `A-G` for high notes (do-si)
       - `0` for rest
     - Duration modifiers: 
-      - Default speed = 1x
+      - Default holdtime = 1x
       - `s` = 0.75x
       - `S` = 0.5x
       - `l` = 1.5x
