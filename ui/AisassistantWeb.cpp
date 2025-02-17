@@ -24,15 +24,15 @@ const char *ssid = "dht";
 const char *password = "12345678";
 
 // Baidu API credentials
-const char *baidu_api_key = "GakjRjg8gvBJR0kPAI3bELE8";
-const char *baidu_secret_key = "wlcE2Ynr2WIZGmm2jCpZJIiThYKEeyB7";
+const char *baidu_api_key = "";
+const char *baidu_secret_key = "";
 
 // Baidu 千帆大模型
-char *qianfan_api_key = "ISllFHtC2PlGBIu1Gfk74I3m";
-char *qianfan_secret_key = "J5L7rmxGgMbmJJdZHxkpgMYev6nNPm6T";
+char *qianfan_api_key = "";
+char *qianfan_secret_key = "";
 // Spark API的URL和授权信息
 const char *Spark_url = "https://spark-api-open.xf-yun.com/v1/chat/completions";
-const char *Spark_authorization = "Bearer GfnukHUxljsYtRFEsEWG:PjDPcjFvHKwiOwuTkkaW";
+const char *Spark_authorization = "";
 
 // 获取access token
 String baidu_access_token = "";
