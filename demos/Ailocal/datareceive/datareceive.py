@@ -58,7 +58,7 @@ while(1):
                         file_count = file_count+1
                         # 生成WAV文件头并保存文件
                         wav_header = generate_wav_header(len(raw_audio_data), SAMPLE_RATE, SAMPLE_BITS, CHANNELS)
-                        filename = f'noise.{file_count:03d}.wav'  # 生成文件名
+                        filename = f'test1.{file_count:03d}.wav'  # 生成文件名
                         with open(filename, 'wb') as wf:
                             wf.write(wav_header + raw_audio_data)
                             print("WAV file saved!")

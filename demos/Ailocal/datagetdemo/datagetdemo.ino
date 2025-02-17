@@ -11,7 +11,7 @@
 #define SAMPLE_RATE 16000U  // Sample rate in Hz
 #define SAMPLE_BITS 16      // Sample bits (16 for 16-bit audio)
 #define RECORD_TIME_SEC 5   // Record for 1 second
-#define VOLUME_GAIN 8       // Volume gain factor
+#define VOLUME_GAIN 4       // Volume gain factor
 const char signature[] = "%";
 const char signatureStart[] = "#";
 void setup() {

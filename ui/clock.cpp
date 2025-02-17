@@ -139,56 +139,90 @@ void getDc(int* Y, int* M, int* D) {  //获取本地时间
   Serial.println("--------------");
   return;
 }
-
+int getDaysInMonth(int year, int month) {
+  // 返回指定年月的天数
+  int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  if (month == 2 && (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))) {
+    return 29; // 闰年2月有29天
+  }
+  return daysInMonth[month - 1];
+}
 void getT4G() {
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
+  Serial2.println("AT+CFUN=1\r");
+  Serial2.println("AT+CFUN=1\r");
   for (int i = 0; i < 5; i++) {
     Serial2.println("AT+CIPGSMLOC=2,1\r");
     String response = "";
+    String timeString = "";
     int cnt = 0;
-    while (!Serial2.available()) {
+
+
+    while (1) {
       cnt += 1;
-      Serial.print(".");
+      response = Serial2.readString();
+      Serial.println(response);
       delay(10);
-      if (cnt >= 5) {
-        Serial.println("getT4Gfail");
+      if (response.indexOf("/") != -1 && response.indexOf("+NITZ: ") != -1) {
+
+        timeString = response.substring((response.indexOf("+NITZ: ") + 7), (response.indexOf("+NITZ: ") + 7 + 19));
+        Serial.println("break");
+        break;
+      } else continue;
+      if (cnt >= 6) break;
+    }
+
+    //Serial.println("AT+CIPGSMLOC=2,1\r");
+    //while (Serial2.available()) {
+    //response = Serial2.readString();
+    if (response.length() > 16) {
+      // 解析时间信息
+      //String timeString = response.substring(8, 27);  // 提取时间部分
+      Serial.print("timeString");
+      Serial.println(timeString);
+      int Tyear = atoi(timeString.substring(0, 4).c_str());
+      int Tmon = atoi(timeString.substring(5, 7).c_str());
+      int Tday = atoi(timeString.substring(8, 10).c_str());
+      int Thour = atoi(timeString.substring(11, 13).c_str());
+      int Tmin = atoi(timeString.substring(14, 16).c_str());
+      int Tsec = atoi(timeString.substring(17, 19).c_str());
+      // 将UTC时间加8小时
+      Thour += 8;
+
+      // 处理时间进位
+      if (Thour >= 24) {
+        Thour -= 24;
+        Tday += 1;
+        // 检查日期是否需要进位
+        if (Tday > getDaysInMonth(Tyear, Tmon)) {
+          Tday = 1;
+          Tmon += 1;
+          if (Tmon > 12) {
+            Tmon = 1;
+            Tyear += 1;
+          }
+        }
+      }
+      // 打印解析结果
+      Serial.println(Tyear);
+      Serial.println(Tmon);
+      Serial.println(Tday);
+      Serial.println(Thour);
+      Serial.println(Tmin);
+      Serial.println(Tsec);
+
+      // // 调整RTC模块
+      if (Tyear >= 2025) {
+        DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
+        rtc.adjust(now);
+      } else {
         break;
       }
+      return;
     }
-    Serial.println("AT+CIPGSMLOC=2,1\r");
-    while (Serial2.available()) {
-      response = Serial2.readString();
-      if (response.length() > 20) {
-        // 解析时间信息
-        String timeString = response.substring(16, 35);  // 提取时间部分
-        Serial.println(timeString);
-        int Tyear = atoi(timeString.substring(0, 4).c_str());
-        int Tmon = atoi(timeString.substring(5, 7).c_str());
-        int Tday = atoi(timeString.substring(8, 10).c_str());
-        int Thour = atoi(timeString.substring(11, 13).c_str());
-        int Tmin = atoi(timeString.substring(14, 16).c_str());
-        int Tsec = atoi(timeString.substring(17, 19).c_str());
-
-        // 打印解析结果
-        Serial.println(Tyear);
-        Serial.println(Tmon);
-        Serial.println(Tday);
-        Serial.println(Thour);
-        Serial.println(Tmin);
-        Serial.println(Tsec);
-
-        // // 调整RTC模块
-        if (Tyear >= 2025) {
-          DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
-          rtc.adjust(now);
-        } else {
-          break;
-        }
-        return;
-      }
-    }
+    //}
   }
-    for (int i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     Serial2.println("AT+CSCLK=2\r");
     delay(100);
     while (Serial2.available()) {
@@ -324,9 +358,9 @@ void Rtctask(void* arg) {
   }
 }
 
-void setTimechar(int timeset,int num) {
+void setTimechar(int timeset, int num) {
 
-  if ( num <= 3) {
+  if (num <= 3) {
     string temp = std::__cxx11::to_string(timeset);
     const char* tempc = temp.c_str();
     switch (num) {
@@ -334,7 +368,7 @@ void setTimechar(int timeset,int num) {
       case 1: lv_label_set_text(ui_hour1label, tempc); break;
       case 2: lv_label_set_text(ui_min0label, tempc); break;
       case 3: lv_label_set_text(ui_min1label, tempc); break;
-      default:break;
+      default: break;
     }
   }
 }

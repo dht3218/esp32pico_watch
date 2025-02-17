@@ -1,6 +1,6 @@
 #include "AiassistantLocal.h"
 #include "AisassistantWeb.h"
-#include <pico_detect01_inferencing.h>
+#include <pico_detect_inferencing.h>
 #include <driver/i2s.h>
 #include "user_led.h"
 #include "ui.h"  ////////////////////
