@@ -1,45 +1,155 @@
 #define RXD2 19
 #define TXD2 21
 #include <esp_sleep.h>
+int getDaysInMonth(int year, int month) {
+  // 返回指定年月的天数
+  int daysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+  if (month == 2 && (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))) {
+    return 29;  // 闰年2月有29天
+  }
+  return daysInMonth[month - 1];
+}
 void getT4G() {
+  Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
+  Serial2.println("AT+CFUN=1\r");
+  Serial2.println("AT+CFUN=1\r");
+  vTaskDelay(200);
+  //for (int i = 0; i < 5; i++) {
+  Serial2.println("AT+CIPGSMLOC=2,1\r");
   Serial2.println("AT+CIPGSMLOC=2,1\r");
   String response = "";
-  while (!Serial2.available()) delay(10);
-  Serial.println("AT+CIPGSMLOC=2,1\r");
-  while (Serial2.available()) {
-    //char c = Serial2.readString();
-    // Serial.write(c);  // 将收到的数据打印到主串口
+  String timeString = "";
+  int cnt = 0;
+
+
+  while (1) {
+    cnt += 1;
     response = Serial2.readString();
-    //
-    // if (c == '\r') {
+    Serial.println(response);
+    //delay(10);
+    if (response.indexOf("/") != -1 && response.indexOf("+NITZ: ") != -1) {
 
-    //   // 检查是否收到完整的响应
-    //   //String response = Serial.readStringUntil('\n');
-    if (response.length() > 20) {
-      // 解析时间信息
-      String timeString = response.substring(16, 35);  // 提取时间部分
-      Serial.println(timeString);
-      int Tyear = atoi(timeString.substring(0, 4).c_str());
-      int Tmon = atoi(timeString.substring(5, 7).c_str());
-      int Tday = atoi(timeString.substring(8, 10).c_str());
-      int Thour = atoi(timeString.substring(11, 13).c_str());
-      int Tmin = atoi(timeString.substring(14, 16).c_str());
-      int Tsec = atoi(timeString.substring(17, 19).c_str());
+      timeString = response.substring((response.indexOf("+NITZ: ") + 7), (response.indexOf("+NITZ: ") + 7 + 19));
+      Serial.println("break0");
+      break;
+    } else if (response.indexOf("/") != -1 && response.indexOf("+CIPGSMLOC: ") != -1) {
+      timeString = response.substring((response.indexOf("+CIPGSMLOC: ") + 14), (response.indexOf("+CIPGSMLOC: ") + 14 + 19));
+      Serial.println("break1");
+      break;
+    } else {
+      if (cnt >= 20) {
+        Serial.println("break2");
+        break;
+      }
+      continue;
+    }
+  }
 
-      // 打印解析结果
-      Serial.println(Tyear);
-      Serial.println(Tmon);
-      Serial.println(Tday);
-      Serial.println(Thour);
-      Serial.println(Tmin);
-      Serial.println(Tsec);
+  //Serial.println("AT+CIPGSMLOC=2,1\r");
+  //while (Serial2.available()) {
+  //response = Serial2.readString();
+  if (response.length() > 16) {
+    // 解析时间信息
+    //String timeString = response.substring(8, 27);  // 提取时间部分
+    Serial.print("timeString");
+    Serial.println(timeString);
+    int Tyear = atoi(timeString.substring(0, 4).c_str());
+    int Tmon = atoi(timeString.substring(5, 7).c_str());
+    int Tday = atoi(timeString.substring(8, 10).c_str());
+    int Thour = atoi(timeString.substring(11, 13).c_str());
+    int Tmin = atoi(timeString.substring(14, 16).c_str());
+    int Tsec = atoi(timeString.substring(17, 19).c_str());
+    // 将UTC时间加8小时
+    Thour += 8;
 
-      //     // // 调整RTC模块
-      //     // DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
-      //     // rtc.adjust(now);  // 假设你已经初始化了RTC模块
+    // 处理时间进位
+    if (Thour >= 24) {
+      Thour -= 24;
+      Tday += 1;
+      // 检查日期是否需要进位
+      if (Tday > getDaysInMonth(Tyear, Tmon)) {
+        Tday = 1;
+        Tmon += 1;
+        if (Tmon > 12) {
+          Tmon = 1;
+          Tyear += 1;
+        }
+      }
+    }
+    // 打印解析结果
+    Serial.println(Tyear);
+    Serial.println(Tmon);
+    Serial.println(Tday);
+    Serial.println(Thour);
+    Serial.println(Tmin);
+    Serial.println(Tsec);
+
+    // // // 调整RTC模块
+    // if (Tyear >= 2025) {
+    //   DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
+    //   rtc.adjust(now);
+    // } 
+    return;
+  }
+  //}
+  //}
+  for (int i = 0; i < 3; i++) {
+    Serial2.println("AT+CSCLK=2\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
+    }
+  }
+
+  for (int i = 0; i < 3; i++) {
+    Serial2.println("AT+CFUN=4,0\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
     }
   }
 }
+// void getT4G() {
+//   Serial2.println("AT+CIPGSMLOC=2,1\r");
+//   String response = "";
+//   while (!Serial2.available()) delay(10);
+//   Serial.println("AT+CIPGSMLOC=2,1\r");
+//   while (Serial2.available()) {
+//     //char c = Serial2.readString();
+//     // Serial.write(c);  // 将收到的数据打印到主串口
+//     response = Serial2.readString();
+//     //
+//     // if (c == '\r') {
+
+//     //   // 检查是否收到完整的响应
+//     //   //String response = Serial.readStringUntil('\n');
+//     if (response.indexOf("/") != -1 && response.indexOf("+CIPGSMLOC: ") != -1) {
+//       // 解析时间信息
+//       String timeString = response.substring(16, 35);  // 提取时间部分
+//       Serial.println(timeString);
+//       int Tyear = atoi(timeString.substring(0, 4).c_str());
+//       int Tmon = atoi(timeString.substring(5, 7).c_str());
+//       int Tday = atoi(timeString.substring(8, 10).c_str());
+//       int Thour = atoi(timeString.substring(11, 13).c_str());
+//       int Tmin = atoi(timeString.substring(14, 16).c_str());
+//       int Tsec = atoi(timeString.substring(17, 19).c_str());
+
+//       // 打印解析结果
+//       Serial.println(Tyear);
+//       Serial.println(Tmon);
+//       Serial.println(Tday);
+//       Serial.println(Thour);
+//       Serial.println(Tmin);
+//       Serial.println(Tsec);
+
+//       //     // // 调整RTC模块
+//       //     // DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
+//       //     // rtc.adjust(now);  // 假设你已经初始化了RTC模块
+//     }
+//   }
+// }
 void setup() {
 
   pinMode(35, INPUT_PULLUP);

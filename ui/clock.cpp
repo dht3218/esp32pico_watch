@@ -141,52 +141,87 @@ void getDc(int* Y, int* M, int* D) {  //获取本地时间
 }
 int getDaysInMonth(int year, int month) {
   // 返回指定年月的天数
-  int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+  int daysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
   if (month == 2 && (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))) {
-    return 29; // 闰年2月有29天
+    return 29;  // 闰年2月有29天
   }
   return daysInMonth[month - 1];
 }
 void getT4G() {
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
-  Serial2.println("AT+CFUN=1\r");
-  Serial2.println("AT+CFUN=1\r");
   for (int i = 0; i < 5; i++) {
-    Serial2.println("AT+CIPGSMLOC=2,1\r");
-    String response = "";
-    String timeString = "";
-    int cnt = 0;
-
-
-    while (1) {
-      cnt += 1;
-      response = Serial2.readString();
-      Serial.println(response);
-      delay(10);
-      if (response.indexOf("/") != -1 && response.indexOf("+NITZ: ") != -1) {
-
-        timeString = response.substring((response.indexOf("+NITZ: ") + 7), (response.indexOf("+NITZ: ") + 7 + 19));
-        Serial.println("break");
-        break;
-      } else continue;
-      if (cnt >= 6) break;
+    Serial2.println("AT+CFUN=1\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
     }
+  }
+  for (int i = 0; i < 5; i++) {
+    Serial2.println("AT+CSCLK=2\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
+    }
+  }
+  for (int i = 0; i < 2; i++) {
+    Serial2.println("ATE0\r");
+    delay(100);
+    while (Serial2.available()) {
+      //Serial.write(".");
+      Serial.write(Serial2.read());
+    }
+  }
+  vTaskDelay(200);
+  //for (int i = 0; i < 5; i++) {
+  Serial2.println("AT+CIPGSMLOC=2,1\r");
+  Serial2.println("AT+CIPGSMLOC=2,1\r");
+  String response = "";
+  String timeString = "";
+  int cnt = 0;
+  int state = 0;
 
-    //Serial.println("AT+CIPGSMLOC=2,1\r");
-    //while (Serial2.available()) {
-    //response = Serial2.readString();
-    if (response.length() > 16) {
-      // 解析时间信息
-      //String timeString = response.substring(8, 27);  // 提取时间部分
-      Serial.print("timeString");
-      Serial.println(timeString);
-      int Tyear = atoi(timeString.substring(0, 4).c_str());
-      int Tmon = atoi(timeString.substring(5, 7).c_str());
-      int Tday = atoi(timeString.substring(8, 10).c_str());
-      int Thour = atoi(timeString.substring(11, 13).c_str());
-      int Tmin = atoi(timeString.substring(14, 16).c_str());
-      int Tsec = atoi(timeString.substring(17, 19).c_str());
-      // 将UTC时间加8小时
+  while (1) {
+    cnt += 1;
+    response = Serial2.readString();
+    Serial.println(response);
+    //delay(10);
+    if (response.indexOf("/") != -1 && response.indexOf("+NITZ: ") != -1) {
+      state = 1;
+      timeString = response.substring((response.indexOf("+NITZ: ") + 7), (response.indexOf("+NITZ: ") + 7 + 19));
+      Serial.println("break0");
+      break;
+    } else if (response.indexOf("/") != -1 && response.indexOf("+CIPGSMLOC: ") != -1) {
+      state = 2;
+      timeString = re  sponse.substring((response.indexOf("+CIPGSMLOC: ") + 14), (response.indexOf("+CIPGSMLOC: ") + 14 + 19));
+      Serial.println("break1");
+      break;
+    } else {
+      if (cnt >= 10) {
+        Serial.println("break2");
+        break;
+      }
+      continue;
+    }
+  }
+
+  //Serial.println("AT+CIPGSMLOC=2,1\r");
+  //while (Serial2.available()) {
+  //response = Serial2.readString();
+  if (response.length() > 16) {
+    // 解析时间信息
+    //String timeString = response.substring(8, 27);  // 提取时间部分
+    Serial.print("timeString");
+    Serial.println(timeString);
+    int Tyear = atoi(timeString.substring(0, 4).c_str());
+    int Tmon = atoi(timeString.substring(5, 7).c_str());
+    int Tday = atoi(timeString.substring(8, 10).c_str());
+    int Thour = atoi(timeString.substring(11, 13).c_str());
+    int Tmin = atoi(timeString.substring(14, 16).c_str());
+    int Tsec = atoi(timeString.substring(17, 19).c_str());
+    // 将UTC时间加8小时
+    if (state == 1) {
       Thour += 8;
 
       // 处理时间进位
@@ -203,25 +238,26 @@ void getT4G() {
           }
         }
       }
-      // 打印解析结果
-      Serial.println(Tyear);
-      Serial.println(Tmon);
-      Serial.println(Tday);
-      Serial.println(Thour);
-      Serial.println(Tmin);
-      Serial.println(Tsec);
-
-      // // 调整RTC模块
-      if (Tyear >= 2025) {
-        DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
-        rtc.adjust(now);
-      } else {
-        break;
-      }
-      return;
     }
-    //}
+    // 打印解析结果
+    Serial.println(Tyear);
+    Serial.println(Tmon);
+    Serial.println(Tday);
+    Serial.println(Thour);
+    Serial.println(Tmin);
+    Serial.println(Tsec);
+
+    // // 调整RTC模块
+    if (Tyear >= 2025) {
+      DateTime now = DateTime(Tyear, Tmon, Tday, Thour, Tmin, Tsec);
+      rtc.adjust(now);
+    }  //  else {
+    //   break;
+    // }
+    return;
   }
+  //}
+  //}
   for (int i = 0; i < 3; i++) {
     Serial2.println("AT+CSCLK=2\r");
     delay(100);
