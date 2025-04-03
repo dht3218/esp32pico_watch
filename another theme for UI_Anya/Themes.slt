@@ -1,0 +1,111 @@
+{
+  "deftheme": {
+    "name": "Default",
+    "properties": [
+      {
+        "nid": 1000321,
+        "strtype": "THEME_COLOR",
+        "strval": "Back",
+        "intarray": [
+          24,
+          31,
+          37,
+          255
+        ],
+        "InheritedType": 0
+      },
+      {
+        "nid": 1000322,
+        "strtype": "THEME_COLOR",
+        "strval": "Front",
+        "intarray": [
+          147,
+          195,
+          253,
+          255
+        ],
+        "InheritedType": 0
+      },
+      {
+        "nid": 1000323,
+        "strtype": "THEME_COLOR",
+        "strval": "Mask1",
+        "intarray": [
+          163,
+          181,
+          213,
+          128
+        ],
+        "InheritedType": 0
+      },
+      {
+        "nid": 1000324,
+        "strtype": "THEME_COLOR",
+        "strval": "Mask2",
+        "intarray": [
+          6,
+          39,
+          87,
+          200
+        ],
+        "InheritedType": 0
+      }
+    ]
+  },
+  "themes": [
+    {
+      "name": "LIGHT",
+      "properties": [
+        {
+          "nid": 1000321,
+          "strtype": "THEME_COLOR",
+          "strval": "Back",
+          "intarray": [
+            252,
+            227,
+            253,
+            255
+          ],
+          "InheritedType": 0
+        },
+        {
+          "nid": 1000322,
+          "strtype": "THEME_COLOR",
+          "strval": "Front",
+          "intarray": [
+            166,
+            60,
+            60,
+            255
+          ],
+          "InheritedType": 0
+        },
+        {
+          "nid": 1000323,
+          "strtype": "THEME_COLOR",
+          "strval": "Mask1",
+          "intarray": [
+            237,
+            170,
+            73,
+            150
+          ],
+          "InheritedType": 0
+        },
+        {
+          "nid": 1000324,
+          "strtype": "THEME_COLOR",
+          "strval": "Mask2",
+          "intarray": [
+            237,
+            175,
+            224,
+            225
+          ],
+          "InheritedType": 0
+        }
+      ]
+    }
+  ],
+  "selected_theme": "LIGHT"
+}

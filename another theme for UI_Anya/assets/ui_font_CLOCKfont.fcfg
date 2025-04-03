@@ -1,0 +1,16 @@
+{
+  "codename": "CLOCKfont",
+  "ttf_path": "/assets/字魂熊猫体(商用需授权).ttf",
+  "bin_path": "/assets\\ui_font_CLOCKfont.bin",
+  "c_path": "/assets\\ui_font_CLOCKfont.c",
+  "cfg_path": "/assets\\ui_font_CLOCKfont.fcfg",
+  "size": 100,
+  "bpp": 1,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7f"
+  ],
+  "symbols": "0123456789",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}
